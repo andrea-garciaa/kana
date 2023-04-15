@@ -6,7 +6,7 @@ enum KanaToken {
     // Base
     A,  I,   U,   E,  O,
     Ka, Ki,  Ku,  Ke, Ko, 
-    Sa, Shi, Su,  Se, So,       // Variant
+    Sa, Shi, Su,  Se, So,       // Variant for sokuon
     Ta, Chi, Tsu, Te, To,       LittleTsu,
     Na, Ni,  Nu,  Ne, No, 
     Ha, Hi,  Fu,  He, Ho, 
@@ -23,7 +23,7 @@ enum KanaToken {
     Ba, Bi,  Bu,  Be, Bo,
     Pa, Pi,  Pu,  Pe, Po,
 
-    // Combo
+    // Yoon
     Kya,     Kyu,     Kyo,
     Gya,     Gyu,     Gyo,
     Sha,     Shu,     Sho,
@@ -287,22 +287,42 @@ impl Kanas {
 
     /// Encode a vector of kana tokens from a Modified-Hepburn romaji sequence (https://en.wikipedia.org/wiki/Hepburn_romanization#Variants)
     pub fn from_hepburn(hepburn_sequence: &str) -> Self {
-        let chars = hepburn_sequence.chars();
         let mut kanas = vec![];
 
-        for ch in chars {
-            match ch {
-                'a' | 'i' | 'u' | 'e' | 'o' => {
-                    kanas.push(match ch {
-                        'a' => KanaToken::A,
-                        'i' => KanaToken::I,
-                        'u' => KanaToken::U,
-                        'e' => KanaToken::E,
-                        'o' => KanaToken::O,
-                        _ => KanaToken::NonKana(String::from(ch)),
-                    });
-                },
-                _ => { kanas.push(KanaToken::NonKana(String::from(ch))); }
+        let chars = hepburn_sequence.chars();
+        let mut iter = chars.into_iter();
+
+        loop {
+            match iter.next() {
+                None => break,
+                Some(ch) => {
+                    match ch {
+                        'a' | 'i' | 'u' | 'e' | 'o' => {
+                            kanas.push(match ch {
+                                'a' => KanaToken::A,
+                                'i' => KanaToken::I,
+                                'u' => KanaToken::U,
+                                'e' => KanaToken::E,
+                                'o' => KanaToken::O,
+                                _ => KanaToken::NonKana(String::from(ch)),
+                            });
+                        },
+                        'k' => {
+                            if let Some(ch2) = iter.next() {
+                                match ch2 {
+                                    'a' => {
+                                        kanas.push(KanaToken::Ka);
+                                    },
+                                    _ => { KanaToken::NonKana(String::from(ch2)); },
+                                }
+                            }
+                        },
+                        's' => {
+        
+                        }
+                        _ => { kanas.push(KanaToken::NonKana(String::from(ch))); }
+                    }
+                }
             }
         }
 
