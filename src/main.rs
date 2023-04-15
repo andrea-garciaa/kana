@@ -1,16 +1,18 @@
 use std::{env, str::Chars};
 
 enum KanaToken {
+    NonKana(String),
+
     // Base
     A,  I,   U,   E,  O,
     Ka, Ki,  Ku,  Ke, Ko, 
-    Sa, Shi, Su,  Se, So, 
-    Ta, Chi, Tsu, Te, To, 
+    Sa, Shi, Su,  Se, So,       // Variant
+    Ta, Chi, Tsu, Te, To,       LittleTsu,
     Na, Ni,  Nu,  Ne, No, 
     Ha, Hi,  Fu,  He, Ho, 
     Ma, Mi,  Mu,  Me, Mo, 
-    Ya, Yi,  Yu,  Ye, Yo, 
-    Ra, Ri,  Ry,  Re, Ro, 
+    Ya,      Yu,      Yo, 
+    Ra, Ri,  Ru,  Re, Ro, 
     Wa,               Wo,
     N,
 
@@ -34,16 +36,61 @@ enum KanaToken {
     Mya,     Myu,     Myo,
     Rya,     Ryu,     Ryo,
 
-    LittleTsu, LittleShi,
+    // Extended (katakana only)
     
-    NonKana(String),
 }
 
 impl KanaToken {
     pub fn to_hiragana(&self) -> String {
         String::from(match &self {
-            KanaToken::A => "あ",
             KanaToken::NonKana(x) => x,
+            KanaToken::A => "あ",
+            KanaToken::I => "い",
+            KanaToken::U => "う",
+            KanaToken::E => "え",
+            KanaToken::O => "お",
+            KanaToken::Ka => "か",
+            KanaToken::Ki => "き",
+            KanaToken::Ku => "く",
+            KanaToken::Ke => "け",
+            KanaToken::Ko => "こ",
+            KanaToken::Sa => "さ",
+            KanaToken::Shi => "し",
+            KanaToken::Su => "す",
+            KanaToken::Se => "せ",
+            KanaToken::So => "そ",
+            KanaToken::Ta => "た",
+            KanaToken::Chi => "ち",
+            KanaToken::Tsu => "つ",
+            KanaToken::Te => "て",
+            KanaToken::To => "と",
+            KanaToken::Na => "な",
+            KanaToken::Ni => "に",
+            KanaToken::Nu => "ぬ",
+            KanaToken::Ne => "ね",
+            KanaToken::No => "の",
+            KanaToken::Ha => "は",
+            KanaToken::Hi => "ひ",
+            KanaToken::Fu => "ふ",
+            KanaToken::He => "へ",
+            KanaToken::Ho => "ほ",
+            KanaToken::Ma => "ま",
+            KanaToken::Mi => "み",
+            KanaToken::Mu => "む",
+            KanaToken::Me => "め",
+            KanaToken::Mo => "も",
+            KanaToken::Ya => "や",
+            KanaToken::Yu => "ゆ",
+            KanaToken::Yo => "よ",
+            KanaToken::Ra => "ら",
+            KanaToken::Ri => "り",
+            KanaToken::Ru => "る",
+            KanaToken::Re => "れ",
+            KanaToken::Ro => "ろ",
+            KanaToken::Wa => "わ",
+            KanaToken::Wo => "を",
+            KanaToken::N => "ん",
+            
             _ => "?"
         })
     }
@@ -80,8 +127,9 @@ impl Kanas {
         output
     }
 
-    pub fn from_romaji(romaji: &String) -> Self {
-        let chars = romaji.as_str().chars();
+    /// Encode a vector of kana tokens from a Modified-Hepburn romaji sequence (https://en.wikipedia.org/wiki/Hepburn_romanization#Variants)
+    pub fn from_hepburn(hepburn_sequence: &String) -> Self {
+        let chars = hepburn_sequence.as_str().chars();
         let mut kanas = vec![];
 
         for ch in chars {
@@ -107,7 +155,7 @@ impl Kanas {
 fn main() {
     let args = env::args().skip(1).collect::<Vec<String>>().join(" ");
 
-    let kanas = Kanas::from_romaji(&args);
+    let kanas = Kanas::from_hepburn(&args);
 
     println!("{}", kanas.to_hiraganas());
     println!("{}", kanas.to_katakanas());
