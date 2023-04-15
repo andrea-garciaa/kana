@@ -41,8 +41,8 @@ enum KanaToken {
 }
 
 impl KanaToken {
-    pub fn to_hiragana(&self) -> String {
-        String::from(match &self {
+    pub fn to_hiragana(&self) -> &str {
+        match &self {
             KanaToken::NonKana(x) => x,
             KanaToken::A => "あ",
             KanaToken::I => "い",
@@ -148,15 +148,117 @@ impl KanaToken {
             KanaToken::Ryo => "りょ",
 
             _ => "?"
-        })
+        }
     }
 
-    pub fn to_katakana(&self) -> String {
-        String::from(match &self {
-            KanaToken::A => "き",
+    pub fn to_katakana(&self) -> &str {
+        match &self {
             KanaToken::NonKana(x) => x,
+            KanaToken::A => "ア",
+            KanaToken::I => "イ",
+            KanaToken::U => "ウ",
+            KanaToken::E => "エ",
+            KanaToken::O => "オ",
+            KanaToken::Ka => "カ",
+            KanaToken::Ki => "キ",
+            KanaToken::Ku => "ク",
+            KanaToken::Ke => "ケ",
+            KanaToken::Ko => "コ",
+            KanaToken::Sa => "サ",
+            KanaToken::Shi => "シ",
+            KanaToken::Su => "ス",
+            KanaToken::Se => "セ",
+            KanaToken::So => "ソ",
+            KanaToken::Ta => "タ",
+            KanaToken::Chi => "チ",
+            KanaToken::Tsu => "ツ",
+            KanaToken::Te => "テ",
+            KanaToken::To => "ト",
+            KanaToken::Na => "ナ",
+            KanaToken::Ni => "ニ",
+            KanaToken::Nu => "ヌ",
+            KanaToken::Ne => "ネ",
+            KanaToken::No => "ノ",
+            KanaToken::Ha => "ハ",
+            KanaToken::Hi => "ヒ",
+            KanaToken::Fu => "フ",
+            KanaToken::He => "ヘ",
+            KanaToken::Ho => "ホ",
+            KanaToken::Ma => "マ",
+            KanaToken::Mi => "ミ",
+            KanaToken::Mu => "ム",
+            KanaToken::Me => "メ",
+            KanaToken::Mo => "モ",
+            KanaToken::Ya => "ヤ",
+            KanaToken::Yu => "ユ",
+            KanaToken::Yo => "ヨ",
+            KanaToken::Ra => "ラ",
+            KanaToken::Ri => "リ",
+            KanaToken::Ru => "ル",
+            KanaToken::Re => "レ",
+            KanaToken::Ro => "ロ",
+            KanaToken::Wa => "ワ",
+            KanaToken::Wo => "ヲ",
+            KanaToken::N => "ン",
+            KanaToken::Ga => "ガ",
+            KanaToken::Gi => "ギ",
+            KanaToken::Gu => "グ",
+            KanaToken::Ge => "ゲ",
+            KanaToken::Go => "ゴ",
+            KanaToken::Za => "ザ",
+            KanaToken::Ji => "ジ",
+            KanaToken::Zu => "ズ",
+            KanaToken::Ze => "ゼ",
+            KanaToken::Zo => "ゾ",
+            KanaToken::Da => "ダ",
+            KanaToken::De => "デ",
+            KanaToken::Do => "ド",
+            KanaToken::Ba => "バ",
+            KanaToken::Bi => "ビ",
+            KanaToken::Bu => "ブ",
+            KanaToken::Be => "ベ",
+            KanaToken::Bo => "ボ",
+            KanaToken::Pa => "パ",
+            KanaToken::Pi => "ピ",
+            KanaToken::Pu => "プ",
+            KanaToken::Pe => "ペ",
+            KanaToken::Po => "ポ",
+            KanaToken::Kya => "キャ",
+            KanaToken::Kyu => "キュ",
+            KanaToken::Kyo => "キョ",
+            KanaToken::Gya => "ギャ",
+            KanaToken::Gyu => "ギュ",
+            KanaToken::Gyo => "ギョ",
+            KanaToken::Sha => "シャ",
+            KanaToken::Shu => "シュ",
+            KanaToken::Sho => "ショ",
+            KanaToken::Ja => "ジャ",
+            KanaToken::Ju => "ジュ",
+            KanaToken::Jo => "ジョ",
+            KanaToken::Cha => "チャ",
+            KanaToken::Chu => "チュ",
+            KanaToken::Cho => "チョ",
+            KanaToken::Nya => "ニャ",
+            KanaToken::Nyu => "ニュ",
+            KanaToken::Nyo => "ニョ",
+            KanaToken::Hya => "ヒャ",
+            KanaToken::Hyu => "ヒュ",
+            KanaToken::Hyo => "ヒョ",
+            KanaToken::Bya => "ビャ",
+            KanaToken::Byu => "ビュ",
+            KanaToken::Byo => "ビョ",
+            KanaToken::Pya => "ピャ",
+            KanaToken::Pyu => "ピュ",
+            KanaToken::Pyo => "ピョ",
+            KanaToken::Mya => "ミャ",
+            KanaToken::Myu => "ミュ",
+            KanaToken::Myo => "ミョ",
+            KanaToken::Rya => "リャ",
+            KanaToken::Ryu => "リュ",
+            KanaToken::Ryo => "リョ",
+
             _ => "?"
-        })
+        }
     }
 }
 
@@ -167,7 +269,7 @@ impl Kanas {
         let mut output = String::new();
 
         for kana in &self.0 {
-            output.push_str(&kana.to_hiragana());
+            output.push_str(kana.to_hiragana());
         }
 
         output
@@ -177,15 +279,15 @@ impl Kanas {
         let mut output = String::new();
 
         for kana in &self.0 {
-            output.push_str(&kana.to_katakana());
+            output.push_str(kana.to_katakana());
         }
 
         output
     }
 
     /// Encode a vector of kana tokens from a Modified-Hepburn romaji sequence (https://en.wikipedia.org/wiki/Hepburn_romanization#Variants)
-    pub fn from_hepburn(hepburn_sequence: &String) -> Self {
-        let chars = hepburn_sequence.as_str().chars();
+    pub fn from_hepburn(hepburn_sequence: &str) -> Self {
+        let chars = hepburn_sequence.chars();
         let mut kanas = vec![];
 
         for ch in chars {
@@ -211,7 +313,7 @@ impl Kanas {
 fn main() {
     let args = env::args().skip(1).collect::<Vec<String>>().join(" ");
 
-    let kanas = Kanas::from_hepburn(&args);
+    let kanas = Kanas::from_hepburn(args.as_str());
 
     println!("{}", kanas.to_hiraganas());
     println!("{}", kanas.to_katakanas());
