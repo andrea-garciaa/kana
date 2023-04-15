@@ -34,6 +34,8 @@ enum KanaToken {
     Mya,     Myu,     Myo,
     Rya,     Ryu,     Ryo,
 
+    LittleTsu, LittleShi,
+    
     NonKana(String),
 }
 
@@ -58,7 +60,7 @@ impl KanaToken {
 pub struct Kanas(Vec<KanaToken>);
 
 impl Kanas {
-    pub fn to_hiragana(&self) -> String {
+    pub fn to_hiraganas(&self) -> String {
         let mut output = String::new();
 
         for kana in &self.0 {
@@ -68,7 +70,7 @@ impl Kanas {
         output
     }
     
-    pub fn to_katakana(&self) -> String {
+    pub fn to_katakanas(&self) -> String {
         let mut output = String::new();
 
         for kana in &self.0 {
@@ -107,6 +109,6 @@ fn main() {
 
     let kanas = Kanas::from_romaji(&args);
 
-    println!("{}", kanas.to_hiragana());
-    println!("{}", kanas.to_katakana());
+    println!("{}", kanas.to_hiraganas());
+    println!("{}", kanas.to_katakanas());
 }
