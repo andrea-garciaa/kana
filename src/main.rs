@@ -1,6 +1,7 @@
 use std::{env, str::Chars};
 
 enum KanaToken {
+    // For simplicity, we can include anything non-kana
     NonKana(String),
 
     // Base
@@ -146,6 +147,7 @@ impl KanaToken {
             KanaToken::Rya => "りゃ",
             KanaToken::Ryu => "りゅ",
             KanaToken::Ryo => "りょ",
+            KanaToken::LittleTsu => "っ",
 
             _ => "?"
         }
@@ -256,6 +258,7 @@ impl KanaToken {
             KanaToken::Rya => "リャ",
             KanaToken::Ryu => "リュ",
             KanaToken::Ryo => "リョ",
+            KanaToken::LittleTsu => "ッ",
 
             _ => "?"
         }
@@ -308,6 +311,8 @@ impl Kanas {
                         NonKanaThenMaybeKana,
                         /// We have a valid kana
                         IsKana(KanaToken),
+                        /// We have a valid kana followed by a kana candidate
+                        IsKanaThenMaybeKana(KanaToken),
                         /// We have a non-kana value followed by a valid kana
                         NonKanaThenKana(KanaToken),
                     }
@@ -324,7 +329,20 @@ impl Kanas {
                                 "y" => KanaScanState::IsKana(KanaToken::Ya),
                                 "r" => KanaScanState::IsKana(KanaToken::Ra),
                                 "w" => KanaScanState::IsKana(KanaToken::Wa),
-                                _ => KanaScanState::NonKanaThenKana(KanaToken::A)
+                                "g" => KanaScanState::IsKana(KanaToken::Ga),
+                                "z" => KanaScanState::IsKana(KanaToken::Za),
+                                "d" => KanaScanState::IsKana(KanaToken::Da),
+                                "b" => KanaScanState::IsKana(KanaToken::Ba),
+                                "p" => KanaScanState::IsKana(KanaToken::Pa),
+
+                                x => { 
+                                    if x.is_empty() {
+                                        // returning only NonKanaThenKana without this check would be fine, but it would do a useless string copy
+                                        KanaScanState::IsKana(KanaToken::A)
+                                    } else {
+                                        KanaScanState::NonKanaThenKana(KanaToken::A)
+                                    }
+                                }
                             }
                         },
                         'i' => {
@@ -336,6 +354,10 @@ impl Kanas {
                                 "h" => KanaScanState::IsKana(KanaToken::Hi),
                                 "m" => KanaScanState::IsKana(KanaToken::Mi),
                                 "r" => KanaScanState::IsKana(KanaToken::Ri),
+                                "g" => KanaScanState::IsKana(KanaToken::Gi),
+                                "j" => KanaScanState::IsKana(KanaToken::Ji),
+                                "b" => KanaScanState::IsKana(KanaToken::Bi),
+                                "p" => KanaScanState::IsKana(KanaToken::Pi),
                                 
                                 x => { 
                                     if x.is_empty() {
@@ -356,6 +378,10 @@ impl Kanas {
                                 "m" => KanaScanState::IsKana(KanaToken::Mu),
                                 "y" => KanaScanState::IsKana(KanaToken::Yu),
                                 "r" => KanaScanState::IsKana(KanaToken::Ru),
+                                "g" => KanaScanState::IsKana(KanaToken::Gu),
+                                "z" => KanaScanState::IsKana(KanaToken::Zu),
+                                "b" => KanaScanState::IsKana(KanaToken::Bu),
+                                "p" => KanaScanState::IsKana(KanaToken::Pu),
 
                                 x => { 
                                     if x.is_empty() {
@@ -375,6 +401,11 @@ impl Kanas {
                                 "h" => KanaScanState::IsKana(KanaToken::He),
                                 "m" => KanaScanState::IsKana(KanaToken::Me),
                                 "r" => KanaScanState::IsKana(KanaToken::Re),
+                                "g" => KanaScanState::IsKana(KanaToken::Ge),
+                                "z" => KanaScanState::IsKana(KanaToken::Ze),
+                                "d" => KanaScanState::IsKana(KanaToken::De),
+                                "b" => KanaScanState::IsKana(KanaToken::Be),
+                                "p" => KanaScanState::IsKana(KanaToken::Pe),
 
                                 x => { 
                                     if x.is_empty() {
@@ -396,10 +427,29 @@ impl Kanas {
                                 "y" => KanaScanState::IsKana(KanaToken::Yo),
                                 "r" => KanaScanState::IsKana(KanaToken::Ro),
                                 "w" => KanaScanState::IsKana(KanaToken::Wo),
-                                _ => KanaScanState::NonKanaThenKana(KanaToken::O)
+                                
+                                x => { 
+                                    if x.is_empty() {
+                                        KanaScanState::IsKana(KanaToken::O)
+                                    } else {
+                                        KanaScanState::NonKanaThenKana(KanaToken::O)
+                                    }
+                                }
                             }
                         },
-                        'k' | 's' | 't' | 'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'p' => {
+                        // sokuon
+                        'k' | 's' | 't' | 'p' => {
+                            if let Some(x) = accumulator.chars().nth(accumulator.len().saturating_sub(1)) {
+                                if x == ch {
+                                    KanaScanState::IsKanaThenMaybeKana(KanaToken::LittleTsu)
+                                } else {
+                                    KanaScanState::MaybeKana
+                                }
+                            } else {
+                                KanaScanState::MaybeKana
+                            }
+                        },
+                        'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j' => {
                             KanaScanState::MaybeKana
                         }
                         _ => {
@@ -413,20 +463,26 @@ impl Kanas {
                             kanas.push(x);
                             accumulator.clear();
                         },
-                        // The new character won't make part of valid kana at all, so push it together with the accumulator, and clear the latter
+                        // We have a valid kana, and the new character may also make up a valid kana, so we push and clear the accumulator, then add the new character to it
+                        KanaScanState::IsKanaThenMaybeKana(x) => {
+                            kanas.push(x);
+                            accumulator.clear();
+                            accumulator.push(ch);
+                        }
+                        // The new character won't make part of valid kana at all, so we push it together with the accumulator, and clear the latter
                         KanaScanState::NonKana => {
                             let mut x = String::from(accumulator.as_str());
                             x.push(ch);
                             kanas.push(KanaToken::NonKana(x));
                             accumulator.clear();
                         },
-                        // The accumulator won't make up any valid kana, but the new character may do, so push and clear the accumulator, and add the new character to it
+                        // The accumulator won't make up any valid kana, but the new character may do, so we push and clear the accumulator, then add this character to it
                         KanaScanState::NonKanaThenMaybeKana => {
                             kanas.push(KanaToken::NonKana(String::from(accumulator.as_str())));
                             accumulator.clear();
                             accumulator.push(ch);
                         },
-                        // The accumulator may form a valid kana, add the new character to it
+                        // The accumulator may form a valid kana, we add the new character to it
                         KanaScanState::MaybeKana => {
                             accumulator.push(ch);
                         },
