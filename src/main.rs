@@ -24,7 +24,7 @@ enum KanaToken {
     Ba, Bi,  Bu,  Be, Bo,
     Pa, Pi,  Pu,  Pe, Po,
 
-    // Yoon
+    // Yoon (combo)
     Kya,     Kyu,     Kyo,
     Gya,     Gyu,     Gyo,
     Sha,     Shu,     Sho,
@@ -37,7 +37,7 @@ enum KanaToken {
     Mya,     Myu,     Myo,
     Rya,     Ryu,     Ryo,
 
-    // Extended (katakana only)
+    // Additionnal combo (for loanwords)
     
 }
 
@@ -427,6 +427,11 @@ impl Kanas {
                                 "y" => KanaScanState::IsKana(KanaToken::Yo),
                                 "r" => KanaScanState::IsKana(KanaToken::Ro),
                                 "w" => KanaScanState::IsKana(KanaToken::Wo),
+                                "g" => KanaScanState::IsKana(KanaToken::Go),
+                                "z" => KanaScanState::IsKana(KanaToken::Zo),
+                                "d" => KanaScanState::IsKana(KanaToken::Do),
+                                "b" => KanaScanState::IsKana(KanaToken::Bo),
+                                "p" => KanaScanState::IsKana(KanaToken::Po),
                                 
                                 x => { 
                                     if x.is_empty() {
@@ -439,11 +444,13 @@ impl Kanas {
                         },
                         // sokuon
                         'k' | 's' | 't' | 'p' => {
-                            if let Some(x) = accumulator.chars().nth(accumulator.len().saturating_sub(1)) {
-                                if x == ch {
+                            if let Some(prev) = accumulator.chars().nth(accumulator.len().saturating_sub(1)) {
+                                if ch == prev {
                                     KanaScanState::IsKanaThenMaybeKana(KanaToken::LittleTsu)
                                 } else {
-                                    KanaScanState::MaybeKana
+                                    match prev {
+                                        _ => KanaScanState::NonKanaThenMaybeKana
+                                    }
                                 }
                             } else {
                                 KanaScanState::MaybeKana
