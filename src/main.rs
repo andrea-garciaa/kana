@@ -317,138 +317,106 @@ impl Kanas {
                         NonKanaThenKana(KanaToken),
                     }
 
-                    let kana: KanaScanState = match ch {
-                        'a' => {
-                            match accumulator.as_str() {
-                                "k" => KanaScanState::IsKana(KanaToken::Ka),
-                                "s" => KanaScanState::IsKana(KanaToken::Sa),
-                                "t" => KanaScanState::IsKana(KanaToken::Ta),
-                                "n" => KanaScanState::IsKana(KanaToken::Na),
-                                "h" => KanaScanState::IsKana(KanaToken::Ha),
-                                "m" => KanaScanState::IsKana(KanaToken::Ma),
-                                "y" => KanaScanState::IsKana(KanaToken::Ya),
-                                "r" => KanaScanState::IsKana(KanaToken::Ra),
-                                "w" => KanaScanState::IsKana(KanaToken::Wa),
-                                "g" => KanaScanState::IsKana(KanaToken::Ga),
-                                "z" => KanaScanState::IsKana(KanaToken::Za),
-                                "d" => KanaScanState::IsKana(KanaToken::Da),
-                                "b" => KanaScanState::IsKana(KanaToken::Ba),
-                                "p" => KanaScanState::IsKana(KanaToken::Pa),
+                    let kana: KanaScanState = match (accumulator.as_str(), ch) {
+                        (x, 'a' | 'u' | 'i' | 'e' | 'o') if x.is_empty() => {
+                            // returning NonKanaThenKana after each (.., <vowel>) without checking accumulator emptiness would be also fine, but it would incur a useless string copy
+                            match ch {
+                                'a' => KanaScanState::IsKana(KanaToken::A),
+                                'i' => KanaScanState::IsKana(KanaToken::I),
+                                'u' => KanaScanState::IsKana(KanaToken::U),
+                                'e' => KanaScanState::IsKana(KanaToken::E),
+                                'o' => KanaScanState::IsKana(KanaToken::O),
+                                _ => unreachable!()
+                            }
+                        },
 
-                                x => { 
-                                    if x.is_empty() {
-                                        // returning only NonKanaThenKana without this check would be fine, but it would do a useless string copy
-                                        KanaScanState::IsKana(KanaToken::A)
-                                    } else {
-                                        KanaScanState::NonKanaThenKana(KanaToken::A)
-                                    }
-                                }
-                            }
-                        },
-                        'i' => {
-                            match accumulator.as_str() {
-                                "k" => KanaScanState::IsKana(KanaToken::Ki),
-                                "sh" => KanaScanState::IsKana(KanaToken::Shi),
-                                "ch" => KanaScanState::IsKana(KanaToken::Chi),
-                                "n" => KanaScanState::IsKana(KanaToken::Ni),
-                                "h" => KanaScanState::IsKana(KanaToken::Hi),
-                                "m" => KanaScanState::IsKana(KanaToken::Mi),
-                                "r" => KanaScanState::IsKana(KanaToken::Ri),
-                                "g" => KanaScanState::IsKana(KanaToken::Gi),
-                                "j" => KanaScanState::IsKana(KanaToken::Ji),
-                                "b" => KanaScanState::IsKana(KanaToken::Bi),
-                                "p" => KanaScanState::IsKana(KanaToken::Pi),
-                                
-                                x => { 
-                                    if x.is_empty() {
-                                        KanaScanState::IsKana(KanaToken::I)
-                                    } else {
-                                        KanaScanState::NonKanaThenKana(KanaToken::I)
-                                    }
-                                }
-                            }
-                        },
-                        'u' => {
-                            match accumulator.as_str() {
-                                "k" => KanaScanState::IsKana(KanaToken::Ku),
-                                "s" => KanaScanState::IsKana(KanaToken::Su),
-                                "ts" => KanaScanState::IsKana(KanaToken::Tsu),
-                                "n" => KanaScanState::IsKana(KanaToken::Nu),
-                                "f" => KanaScanState::IsKana(KanaToken::Fu),
-                                "m" => KanaScanState::IsKana(KanaToken::Mu),
-                                "y" => KanaScanState::IsKana(KanaToken::Yu),
-                                "r" => KanaScanState::IsKana(KanaToken::Ru),
-                                "g" => KanaScanState::IsKana(KanaToken::Gu),
-                                "z" => KanaScanState::IsKana(KanaToken::Zu),
-                                "b" => KanaScanState::IsKana(KanaToken::Bu),
-                                "p" => KanaScanState::IsKana(KanaToken::Pu),
+                        // TODO: add three-letters combo before those
+                        ("k", 'a') => KanaScanState::IsKana(KanaToken::Ka),
+                        ("s", 'a') => KanaScanState::IsKana(KanaToken::Sa),
+                        ("t", 'a') => KanaScanState::IsKana(KanaToken::Ta),
+                        ("n", 'a') => KanaScanState::IsKana(KanaToken::Na),
+                        ("h", 'a') => KanaScanState::IsKana(KanaToken::Ha),
+                        ("m", 'a') => KanaScanState::IsKana(KanaToken::Ma),
+                        ("y", 'a') => KanaScanState::IsKana(KanaToken::Ya),
+                        ("r", 'a') => KanaScanState::IsKana(KanaToken::Ra),
+                        ("w", 'a') => KanaScanState::IsKana(KanaToken::Wa),
+                        ("g", 'a') => KanaScanState::IsKana(KanaToken::Ga),
+                        ("z", 'a') => KanaScanState::IsKana(KanaToken::Za),
+                        ("d", 'a') => KanaScanState::IsKana(KanaToken::Da),
+                        ("b", 'a') => KanaScanState::IsKana(KanaToken::Ba),
+                        ("p", 'a') => KanaScanState::IsKana(KanaToken::Pa),
+                        (.., 'a') => KanaScanState::NonKanaThenKana(KanaToken::A),
 
-                                x => { 
-                                    if x.is_empty() {
-                                        KanaScanState::IsKana(KanaToken::U)
-                                    } else {
-                                        KanaScanState::NonKanaThenKana(KanaToken::U)
-                                    }
-                                }
-                            }
-                        },
-                        'e' => {
-                            match accumulator.as_str() {
-                                "k" => KanaScanState::IsKana(KanaToken::Ke),
-                                "s" => KanaScanState::IsKana(KanaToken::Se),
-                                "t" => KanaScanState::IsKana(KanaToken::Te),
-                                "n" => KanaScanState::IsKana(KanaToken::Ne),
-                                "h" => KanaScanState::IsKana(KanaToken::He),
-                                "m" => KanaScanState::IsKana(KanaToken::Me),
-                                "r" => KanaScanState::IsKana(KanaToken::Re),
-                                "g" => KanaScanState::IsKana(KanaToken::Ge),
-                                "z" => KanaScanState::IsKana(KanaToken::Ze),
-                                "d" => KanaScanState::IsKana(KanaToken::De),
-                                "b" => KanaScanState::IsKana(KanaToken::Be),
-                                "p" => KanaScanState::IsKana(KanaToken::Pe),
+                        // TODO: add remaining three-letters combo before those those that would clash
+                        ("k", 'i') => KanaScanState::IsKana(KanaToken::Ki),
+                        ("sh", 'i') => KanaScanState::IsKana(KanaToken::Shi),
+                        ("ch", 'i') => KanaScanState::IsKana(KanaToken::Chi),
+                        ("n", 'i') => KanaScanState::IsKana(KanaToken::Ni),
+                        ("h", 'i') => KanaScanState::IsKana(KanaToken::Hi),
+                        ("m", 'i') => KanaScanState::IsKana(KanaToken::Mi),
+                        ("r", 'i') => KanaScanState::IsKana(KanaToken::Ri),
+                        ("g", 'i') => KanaScanState::IsKana(KanaToken::Gi),
+                        ("j", 'i') => KanaScanState::IsKana(KanaToken::Ji),
+                        ("b", 'i') => KanaScanState::IsKana(KanaToken::Bi),
+                        ("p", 'i') => KanaScanState::IsKana(KanaToken::Pi),
+                        (.., 'i') => KanaScanState::NonKanaThenKana(KanaToken::I),
 
-                                x => { 
-                                    if x.is_empty() {
-                                        KanaScanState::IsKana(KanaToken::E)
-                                    } else {
-                                        KanaScanState::NonKanaThenKana(KanaToken::E)
-                                    }
-                                }
-                            }
-                        },
-                        'o' => {
-                            match accumulator.as_str() {
-                                "k" => KanaScanState::IsKana(KanaToken::Ko),
-                                "s" => KanaScanState::IsKana(KanaToken::So),
-                                "t" => KanaScanState::IsKana(KanaToken::To),
-                                "n" => KanaScanState::IsKana(KanaToken::No),
-                                "h" => KanaScanState::IsKana(KanaToken::Ho),
-                                "m" => KanaScanState::IsKana(KanaToken::Mo),
-                                "y" => KanaScanState::IsKana(KanaToken::Yo),
-                                "r" => KanaScanState::IsKana(KanaToken::Ro),
-                                "w" => KanaScanState::IsKana(KanaToken::Wo),
-                                "g" => KanaScanState::IsKana(KanaToken::Go),
-                                "z" => KanaScanState::IsKana(KanaToken::Zo),
-                                "d" => KanaScanState::IsKana(KanaToken::Do),
-                                "b" => KanaScanState::IsKana(KanaToken::Bo),
-                                "p" => KanaScanState::IsKana(KanaToken::Po),
-                                
-                                x => { 
-                                    if x.is_empty() {
-                                        KanaScanState::IsKana(KanaToken::O)
-                                    } else {
-                                        KanaScanState::NonKanaThenKana(KanaToken::O)
-                                    }
-                                }
-                            }
-                        },
-                        // sokuon
-                        'k' | 's' | 't' | 'p' => {
+                        // TODO: add remaining three-letters combo before those those that would clash
+                        ("k", 'u') => KanaScanState::IsKana(KanaToken::Ku),
+                        ("s", 'u') => KanaScanState::IsKana(KanaToken::Su),
+                        ("ts", 'u') => KanaScanState::IsKana(KanaToken::Tsu),
+                        ("n", 'u') => KanaScanState::IsKana(KanaToken::Nu),
+                        ("f", 'u') => KanaScanState::IsKana(KanaToken::Fu),
+                        ("m", 'u') => KanaScanState::IsKana(KanaToken::Mu),
+                        ("y", 'u') => KanaScanState::IsKana(KanaToken::Yu),
+                        ("r", 'u') => KanaScanState::IsKana(KanaToken::Ru),
+                        ("g", 'u') => KanaScanState::IsKana(KanaToken::Gu),
+                        ("z", 'u') => KanaScanState::IsKana(KanaToken::Zu),
+                        ("b", 'u') => KanaScanState::IsKana(KanaToken::Bu),
+                        ("p", 'u') => KanaScanState::IsKana(KanaToken::Pu),
+                        (.., 'u') => KanaScanState::NonKanaThenKana(KanaToken::U),
+
+                        // TODO: add three-letters combo before those
+                        ("k", 'e') => KanaScanState::IsKana(KanaToken::Ke),
+                        ("s", 'e') => KanaScanState::IsKana(KanaToken::Se),
+                        ("t", 'e') => KanaScanState::IsKana(KanaToken::Te),
+                        ("n", 'e') => KanaScanState::IsKana(KanaToken::Ne),
+                        ("h", 'e') => KanaScanState::IsKana(KanaToken::He),
+                        ("m", 'e') => KanaScanState::IsKana(KanaToken::Me),
+                        ("r", 'e') => KanaScanState::IsKana(KanaToken::Re),
+                        ("g", 'e') => KanaScanState::IsKana(KanaToken::Ge),
+                        ("z", 'e') => KanaScanState::IsKana(KanaToken::Ze),
+                        ("d", 'e') => KanaScanState::IsKana(KanaToken::De),
+                        ("b", 'e') => KanaScanState::IsKana(KanaToken::Be),
+                        ("p", 'e') => KanaScanState::IsKana(KanaToken::Pe),
+                        (.., 'e') => KanaScanState::NonKanaThenKana(KanaToken::E),
+
+                        // TODO: add three-letters combo before those
+                        ("k", 'o') => KanaScanState::IsKana(KanaToken::Ko),
+                        ("s", 'o') => KanaScanState::IsKana(KanaToken::So),
+                        ("t", 'o') => KanaScanState::IsKana(KanaToken::To),
+                        ("n", 'o') => KanaScanState::IsKana(KanaToken::No),
+                        ("h", 'o') => KanaScanState::IsKana(KanaToken::Ho),
+                        ("m", 'o') => KanaScanState::IsKana(KanaToken::Mo),
+                        ("y", 'o') => KanaScanState::IsKana(KanaToken::Yo),
+                        ("r", 'o') => KanaScanState::IsKana(KanaToken::Ro),
+                        ("w", 'o') => KanaScanState::IsKana(KanaToken::Wo),
+                        ("g", 'o') => KanaScanState::IsKana(KanaToken::Go),
+                        ("z", 'o') => KanaScanState::IsKana(KanaToken::Zo),
+                        ("d", 'o') => KanaScanState::IsKana(KanaToken::Do),
+                        ("b", 'o') => KanaScanState::IsKana(KanaToken::Bo),
+                        ("p", 'o') => KanaScanState::IsKana(KanaToken::Po),
+                        (.., 'o') => KanaScanState::NonKanaThenKana(KanaToken::O),
+
+                        (.., 'k' | 's' | 't' | 'p') => {
                             if let Some(prev) = accumulator.chars().nth(accumulator.len().saturating_sub(1)) {
-                                if ch == prev {
+                                if prev == ch {
+                                    // sokuon
                                     KanaScanState::IsKanaThenMaybeKana(KanaToken::LittleTsu)
                                 } else {
-                                    match prev {
+                                    match (prev, ch) {
+                                        ('t', 's') => KanaScanState::MaybeKana, // example: tsu (or for loanwords: tsa/tsi/tse/tso)
+                                        // combo of previous letter + current letter can't make up a kana
                                         _ => KanaScanState::NonKanaThenMaybeKana
                                     }
                                 }
@@ -456,7 +424,7 @@ impl Kanas {
                                 KanaScanState::MaybeKana
                             }
                         },
-                        'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j' => {
+                        (.., 'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
                             KanaScanState::MaybeKana
                         }
                         _ => {
