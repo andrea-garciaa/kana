@@ -300,7 +300,16 @@ impl Kanas {
 
         loop {
             match iter.next() {
-                None => break,
+                None => {
+                    if !accumulator.is_empty() {
+                        match accumulator.as_str() {
+                            "n" => kanas.push(KanaToken::N),
+                            x => kanas.push(KanaToken::NonKana(String::from(x)))
+                        }
+                    }
+
+                    break
+                },
                 Some(ch) => {
                     enum KanaScanState {
                         /// We have valid candidate-characters for a kana, but still incomplete
