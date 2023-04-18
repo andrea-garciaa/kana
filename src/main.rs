@@ -458,14 +458,14 @@ impl Kanas {
                                     ("s", 's') => KanaScanState::MaybeKana,
                                     ("ss", 'h') => KanaScanState::MaybeKana,
                                     ("t", 't') => KanaScanState::MaybeKana,
-                                    ("t", 'c') => KanaScanState::MaybeKana,
+                                    ("t", 'c') => KanaScanState::MaybeKana, // needed for the following line (tc+h) to be handled, otherwise the 't' would be discarded early
                                     ("tc", 'h') => KanaScanState::MaybeKana,
                                     ("p", 'p') => KanaScanState::MaybeKana,
                                     ("g", 'g') => KanaScanState::MaybeKana,
                                     ("d", 'd') => KanaScanState::MaybeKana,
                                     ("b", 'b') => KanaScanState::MaybeKana,
 
-                                    // for other yoon
+                                    // for some other yoon
                                     ("k", 'y') => KanaScanState::MaybeKana,
                                     ("g", 'y') => KanaScanState::MaybeKana,
                                     ("n", 'y') => KanaScanState::MaybeKana,
@@ -476,6 +476,8 @@ impl Kanas {
                                     ("r", 'y') => KanaScanState::MaybeKana,
 
                                     ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu
+
+                                    ("n", ..) => KanaScanState::IsKanaThenMaybeKana(KanaToken::N),
                                     _ => KanaScanState::NonKanaThenMaybeKana
                                 }
                             }
