@@ -1,4 +1,4 @@
-use std::{env, str::Chars};
+use std::{env};
 
 enum KanaToken {
     // For simplicity, we can include anything non-kana
@@ -311,6 +311,7 @@ impl Kanas {
                         NonKanaThenMaybeKana,
                         /// We have a valid kana
                         IsKana(KanaToken),
+                        IsSokuon(KanaToken),
                         /// We have a valid kana followed by a kana candidate
                         IsKanaThenMaybeKana(KanaToken),
                         /// We have a non-kana value followed by a valid kana
@@ -330,10 +331,13 @@ impl Kanas {
                             }
                         },
 
-                        // TODO: add three-letters combo before those
+                        // TODO: add yoon
                         ("k", 'a') => KanaScanState::IsKana(KanaToken::Ka),
+                        ("kk", 'a') => KanaScanState::IsSokuon(KanaToken::Ka),
                         ("s", 'a') => KanaScanState::IsKana(KanaToken::Sa),
+                        ("ss", 'a') => KanaScanState::IsSokuon(KanaToken::Sa),
                         ("t", 'a') => KanaScanState::IsKana(KanaToken::Ta),
+                        ("tt", 'a') => KanaScanState::IsSokuon(KanaToken::Ta),
                         ("n", 'a') => KanaScanState::IsKana(KanaToken::Na),
                         ("h", 'a') => KanaScanState::IsKana(KanaToken::Ha),
                         ("m", 'a') => KanaScanState::IsKana(KanaToken::Ma),
@@ -341,16 +345,23 @@ impl Kanas {
                         ("r", 'a') => KanaScanState::IsKana(KanaToken::Ra),
                         ("w", 'a') => KanaScanState::IsKana(KanaToken::Wa),
                         ("g", 'a') => KanaScanState::IsKana(KanaToken::Ga),
+                        ("gg", 'a') => KanaScanState::IsSokuon(KanaToken::Ga),
                         ("z", 'a') => KanaScanState::IsKana(KanaToken::Za),
                         ("d", 'a') => KanaScanState::IsKana(KanaToken::Da),
+                        ("dd", 'a') => KanaScanState::IsSokuon(KanaToken::Da),
                         ("b", 'a') => KanaScanState::IsKana(KanaToken::Ba),
+                        ("bb", 'a') => KanaScanState::IsSokuon(KanaToken::Ba),
                         ("p", 'a') => KanaScanState::IsKana(KanaToken::Pa),
+                        ("pp", 'a') => KanaScanState::IsSokuon(KanaToken::Pa),
                         (.., 'a') => KanaScanState::NonKanaThenKana(KanaToken::A),
 
-                        // TODO: add remaining three-letters combo before those those that would clash
+                        // TODO: add yoon
                         ("k", 'i') => KanaScanState::IsKana(KanaToken::Ki),
+                        ("kk", 'i') => KanaScanState::IsSokuon(KanaToken::Ki),
                         ("sh", 'i') => KanaScanState::IsKana(KanaToken::Shi),
+                        ("ssh", 'i') => KanaScanState::IsSokuon(KanaToken::Shi),
                         ("ch", 'i') => KanaScanState::IsKana(KanaToken::Chi),
+                        ("tch", 'i') => KanaScanState::IsSokuon(KanaToken::Chi),
                         ("n", 'i') => KanaScanState::IsKana(KanaToken::Ni),
                         ("h", 'i') => KanaScanState::IsKana(KanaToken::Hi),
                         ("m", 'i') => KanaScanState::IsKana(KanaToken::Mi),
@@ -358,43 +369,61 @@ impl Kanas {
                         ("g", 'i') => KanaScanState::IsKana(KanaToken::Gi),
                         ("j", 'i') => KanaScanState::IsKana(KanaToken::Ji),
                         ("b", 'i') => KanaScanState::IsKana(KanaToken::Bi),
+                        ("bb", 'i') => KanaScanState::IsSokuon(KanaToken::Bi),
                         ("p", 'i') => KanaScanState::IsKana(KanaToken::Pi),
+                        ("pp", 'i') => KanaScanState::IsSokuon(KanaToken::Pi),
                         (.., 'i') => KanaScanState::NonKanaThenKana(KanaToken::I),
 
-                        // TODO: add remaining three-letters combo before those those that would clash
+                        // TODO: add yoon
                         ("k", 'u') => KanaScanState::IsKana(KanaToken::Ku),
+                        ("kk", 'u') => KanaScanState::IsSokuon(KanaToken::Ku),
                         ("s", 'u') => KanaScanState::IsKana(KanaToken::Su),
+                        ("ss", 'u') => KanaScanState::IsSokuon(KanaToken::Su),
                         ("ts", 'u') => KanaScanState::IsKana(KanaToken::Tsu),
+                        ("tts", 'u') => KanaScanState::IsSokuon(KanaToken::Tsu),
                         ("n", 'u') => KanaScanState::IsKana(KanaToken::Nu),
                         ("f", 'u') => KanaScanState::IsKana(KanaToken::Fu),
                         ("m", 'u') => KanaScanState::IsKana(KanaToken::Mu),
                         ("y", 'u') => KanaScanState::IsKana(KanaToken::Yu),
                         ("r", 'u') => KanaScanState::IsKana(KanaToken::Ru),
                         ("g", 'u') => KanaScanState::IsKana(KanaToken::Gu),
+                        ("gg", 'u') => KanaScanState::IsSokuon(KanaToken::Gu),
                         ("z", 'u') => KanaScanState::IsKana(KanaToken::Zu),
                         ("b", 'u') => KanaScanState::IsKana(KanaToken::Bu),
+                        ("bb", 'u') => KanaScanState::IsSokuon(KanaToken::Bu),
                         ("p", 'u') => KanaScanState::IsKana(KanaToken::Pu),
+                        ("pp", 'u') => KanaScanState::IsSokuon(KanaToken::Pu),
                         (.., 'u') => KanaScanState::NonKanaThenKana(KanaToken::U),
 
-                        // TODO: add three-letters combo before those
+                        // TODO: add yoon
                         ("k", 'e') => KanaScanState::IsKana(KanaToken::Ke),
+                        ("kk", 'e') => KanaScanState::IsSokuon(KanaToken::Ke),
                         ("s", 'e') => KanaScanState::IsKana(KanaToken::Se),
+                        ("ss", 'e') => KanaScanState::IsSokuon(KanaToken::Se),
                         ("t", 'e') => KanaScanState::IsKana(KanaToken::Te),
+                        ("tt", 'e') => KanaScanState::IsSokuon(KanaToken::Te),
                         ("n", 'e') => KanaScanState::IsKana(KanaToken::Ne),
                         ("h", 'e') => KanaScanState::IsKana(KanaToken::He),
                         ("m", 'e') => KanaScanState::IsKana(KanaToken::Me),
                         ("r", 'e') => KanaScanState::IsKana(KanaToken::Re),
                         ("g", 'e') => KanaScanState::IsKana(KanaToken::Ge),
+                        ("gg", 'e') => KanaScanState::IsSokuon(KanaToken::Ge),
                         ("z", 'e') => KanaScanState::IsKana(KanaToken::Ze),
                         ("d", 'e') => KanaScanState::IsKana(KanaToken::De),
+                        ("dd", 'e') => KanaScanState::IsSokuon(KanaToken::De),
                         ("b", 'e') => KanaScanState::IsKana(KanaToken::Be),
+                        ("bb", 'e') => KanaScanState::IsSokuon(KanaToken::Be),
                         ("p", 'e') => KanaScanState::IsKana(KanaToken::Pe),
+                        ("pp", 'e') => KanaScanState::IsSokuon(KanaToken::Pe),
                         (.., 'e') => KanaScanState::NonKanaThenKana(KanaToken::E),
 
-                        // TODO: add three-letters combo before those
+                        // TODO: add yoon
                         ("k", 'o') => KanaScanState::IsKana(KanaToken::Ko),
+                        ("kk", 'o') => KanaScanState::IsSokuon(KanaToken::Ko),
                         ("s", 'o') => KanaScanState::IsKana(KanaToken::So),
+                        ("ss", 'o') => KanaScanState::IsSokuon(KanaToken::So),
                         ("t", 'o') => KanaScanState::IsKana(KanaToken::To),
+                        ("tt", 'o') => KanaScanState::IsSokuon(KanaToken::To),
                         ("n", 'o') => KanaScanState::IsKana(KanaToken::No),
                         ("h", 'o') => KanaScanState::IsKana(KanaToken::Ho),
                         ("m", 'o') => KanaScanState::IsKana(KanaToken::Mo),
@@ -402,30 +431,54 @@ impl Kanas {
                         ("r", 'o') => KanaScanState::IsKana(KanaToken::Ro),
                         ("w", 'o') => KanaScanState::IsKana(KanaToken::Wo),
                         ("g", 'o') => KanaScanState::IsKana(KanaToken::Go),
+                        ("gg", 'o') => KanaScanState::IsSokuon(KanaToken::Go),
                         ("z", 'o') => KanaScanState::IsKana(KanaToken::Zo),
                         ("d", 'o') => KanaScanState::IsKana(KanaToken::Do),
+                        ("dd", 'o') => KanaScanState::IsSokuon(KanaToken::Do),
                         ("b", 'o') => KanaScanState::IsKana(KanaToken::Bo),
+                        ("bb", 'o') => KanaScanState::IsSokuon(KanaToken::Bo),
                         ("p", 'o') => KanaScanState::IsKana(KanaToken::Po),
+                        ("pp", 'o') => KanaScanState::IsSokuon(KanaToken::Po),
                         (.., 'o') => KanaScanState::NonKanaThenKana(KanaToken::O),
 
-                        (.., 'k' | 's' | 't' | 'p') => {
-                            if let Some(prev) = accumulator.chars().nth(accumulator.len().saturating_sub(1)) {
-                                if prev == ch {
-                                    // sokuon
-                                    KanaScanState::IsKanaThenMaybeKana(KanaToken::LittleTsu)
-                                } else {
-                                    match (prev, ch) {
-                                        ('t', 's') => KanaScanState::MaybeKana, // example: tsu (or for loanwords: tsa/tsi/tse/tso)
-                                        // combo of previous letter + current letter can't make up a kana
-                                        _ => KanaScanState::NonKanaThenMaybeKana
-                                    }
-                                }
-                            } else {
+                        (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
+                            if x.is_empty() {
                                 KanaScanState::MaybeKana
+                            } else {
+                                match (x, ch) {
+                                    // for chi, shi, and yoon derived from those (cha, sha, etc.)
+                                    ("s", 'h') => KanaScanState::MaybeKana,
+                                    ("c", 'h') => KanaScanState::MaybeKana,
+
+                                    // for tsu and derived (tsa, tse, etc.)
+                                    ("t", 's') => KanaScanState::MaybeKana,
+
+                                    // for sokuon
+                                    ("k", 'k') => KanaScanState::MaybeKana,
+                                    ("s", 's') => KanaScanState::MaybeKana,
+                                    ("ss", 'h') => KanaScanState::MaybeKana,
+                                    ("t", 't') => KanaScanState::MaybeKana,
+                                    ("t", 'c') => KanaScanState::MaybeKana,
+                                    ("tc", 'h') => KanaScanState::MaybeKana,
+                                    ("p", 'p') => KanaScanState::MaybeKana,
+                                    ("g", 'g') => KanaScanState::MaybeKana,
+                                    ("d", 'd') => KanaScanState::MaybeKana,
+                                    ("b", 'b') => KanaScanState::MaybeKana,
+
+                                    // for other yoon
+                                    ("k", 'y') => KanaScanState::MaybeKana,
+                                    ("g", 'y') => KanaScanState::MaybeKana,
+                                    ("n", 'y') => KanaScanState::MaybeKana,
+                                    ("h", 'y') => KanaScanState::MaybeKana,
+                                    ("b", 'y') => KanaScanState::MaybeKana,
+                                    ("p", 'y') => KanaScanState::MaybeKana,
+                                    ("m", 'y') => KanaScanState::MaybeKana,
+                                    ("r", 'y') => KanaScanState::MaybeKana,
+
+                                    ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu
+                                    _ => KanaScanState::NonKanaThenMaybeKana
+                                }
                             }
-                        },
-                        (.., 'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
-                            KanaScanState::MaybeKana
                         }
                         _ => {
                             KanaScanState::NonKana
@@ -435,6 +488,12 @@ impl Kanas {
                     match kana {
                         // We have a valid kana, we can push it and clear the accumulator
                         KanaScanState::IsKana(x) => {
+                            kanas.push(x);
+                            accumulator.clear();
+                        },
+                        // We have a valid sokuon, we can push it and clear the accumulator
+                        KanaScanState::IsSokuon(x) => {
+                            kanas.push(KanaToken::LittleTsu);
                             kanas.push(x);
                             accumulator.clear();
                         },
