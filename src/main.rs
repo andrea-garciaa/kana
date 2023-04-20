@@ -44,7 +44,7 @@ enum KanaToken {
 impl KanaToken {
     pub fn to_hiragana(&self) -> &str {
         match &self {
-            KanaToken::NonKana(x) => x,
+            KanaToken::NonKana(x) => x.as_str(),
             KanaToken::A => "あ",
             KanaToken::I => "い",
             KanaToken::U => "う",
@@ -148,14 +148,12 @@ impl KanaToken {
             KanaToken::Ryu => "りゅ",
             KanaToken::Ryo => "りょ",
             KanaToken::LittleTsu => "っ",
-
-            _ => "?"
         }
     }
 
     pub fn to_katakana(&self) -> &str {
         match &self {
-            KanaToken::NonKana(x) => x,
+            KanaToken::NonKana(x) => x.as_str(),
             KanaToken::A => "ア",
             KanaToken::I => "イ",
             KanaToken::U => "ウ",
@@ -259,8 +257,6 @@ impl KanaToken {
             KanaToken::Ryu => "リュ",
             KanaToken::Ryo => "リョ",
             KanaToken::LittleTsu => "ッ",
-
-            _ => "?"
         }
     }
 }
@@ -340,7 +336,6 @@ impl Kanas {
                             }
                         },
 
-                        // TODO: add yoon
                         ("k", 'a') => KanaScanState::IsKana(KanaToken::Ka),
                         ("kk", 'a') => KanaScanState::IsSokuon(KanaToken::Ka),
                         ("s", 'a') => KanaScanState::IsKana(KanaToken::Sa),
@@ -362,9 +357,19 @@ impl Kanas {
                         ("bb", 'a') => KanaScanState::IsSokuon(KanaToken::Ba),
                         ("p", 'a') => KanaScanState::IsKana(KanaToken::Pa),
                         ("pp", 'a') => KanaScanState::IsSokuon(KanaToken::Pa),
+                        ("ky", 'a') => KanaScanState::IsKana(KanaToken::Kya),
+                        ("gy", 'a') => KanaScanState::IsKana(KanaToken::Gya),
+                        ("sh", 'a') => KanaScanState::IsKana(KanaToken::Sha),
+                        ("j", 'a') => KanaScanState::IsKana(KanaToken::Ja),
+                        ("ch", 'a') => KanaScanState::IsKana(KanaToken::Cha),
+                        ("ny", 'a') => KanaScanState::IsKana(KanaToken::Nya),
+                        ("hy", 'a') => KanaScanState::IsKana(KanaToken::Hya),
+                        ("by", 'a') => KanaScanState::IsKana(KanaToken::Bya),
+                        ("py", 'a') => KanaScanState::IsKana(KanaToken::Pya),
+                        ("my", 'a') => KanaScanState::IsKana(KanaToken::Mya),
+                        ("ry", 'a') => KanaScanState::IsKana(KanaToken::Rya),
                         (.., 'a') => KanaScanState::NonKanaThenKana(KanaToken::A),
 
-                        // TODO: add yoon
                         ("k", 'i') => KanaScanState::IsKana(KanaToken::Ki),
                         ("kk", 'i') => KanaScanState::IsSokuon(KanaToken::Ki),
                         ("sh", 'i') => KanaScanState::IsKana(KanaToken::Shi),
@@ -383,7 +388,6 @@ impl Kanas {
                         ("pp", 'i') => KanaScanState::IsSokuon(KanaToken::Pi),
                         (.., 'i') => KanaScanState::NonKanaThenKana(KanaToken::I),
 
-                        // TODO: add yoon
                         ("k", 'u') => KanaScanState::IsKana(KanaToken::Ku),
                         ("kk", 'u') => KanaScanState::IsSokuon(KanaToken::Ku),
                         ("s", 'u') => KanaScanState::IsKana(KanaToken::Su),
@@ -402,9 +406,19 @@ impl Kanas {
                         ("bb", 'u') => KanaScanState::IsSokuon(KanaToken::Bu),
                         ("p", 'u') => KanaScanState::IsKana(KanaToken::Pu),
                         ("pp", 'u') => KanaScanState::IsSokuon(KanaToken::Pu),
+                        ("ky", 'u') => KanaScanState::IsKana(KanaToken::Kyu),
+                        ("gy", 'u') => KanaScanState::IsKana(KanaToken::Gyu),
+                        ("sh", 'u') => KanaScanState::IsKana(KanaToken::Shu),
+                        ("j", 'u') => KanaScanState::IsKana(KanaToken::Ju),
+                        ("ch", 'u') => KanaScanState::IsKana(KanaToken::Chu),
+                        ("ny", 'u') => KanaScanState::IsKana(KanaToken::Nyu),
+                        ("hy", 'u') => KanaScanState::IsKana(KanaToken::Hyu),
+                        ("by", 'u') => KanaScanState::IsKana(KanaToken::Byu),
+                        ("py", 'u') => KanaScanState::IsKana(KanaToken::Pyu),
+                        ("my", 'u') => KanaScanState::IsKana(KanaToken::Myu),
+                        ("ry", 'u') => KanaScanState::IsKana(KanaToken::Ryu),
                         (.., 'u') => KanaScanState::NonKanaThenKana(KanaToken::U),
 
-                        // TODO: add yoon
                         ("k", 'e') => KanaScanState::IsKana(KanaToken::Ke),
                         ("kk", 'e') => KanaScanState::IsSokuon(KanaToken::Ke),
                         ("s", 'e') => KanaScanState::IsKana(KanaToken::Se),
@@ -426,7 +440,6 @@ impl Kanas {
                         ("pp", 'e') => KanaScanState::IsSokuon(KanaToken::Pe),
                         (.., 'e') => KanaScanState::NonKanaThenKana(KanaToken::E),
 
-                        // TODO: add yoon
                         ("k", 'o') => KanaScanState::IsKana(KanaToken::Ko),
                         ("kk", 'o') => KanaScanState::IsSokuon(KanaToken::Ko),
                         ("s", 'o') => KanaScanState::IsKana(KanaToken::So),
@@ -448,9 +461,20 @@ impl Kanas {
                         ("bb", 'o') => KanaScanState::IsSokuon(KanaToken::Bo),
                         ("p", 'o') => KanaScanState::IsKana(KanaToken::Po),
                         ("pp", 'o') => KanaScanState::IsSokuon(KanaToken::Po),
+                        ("ky", 'o') => KanaScanState::IsKana(KanaToken::Kyo),
+                        ("gy", 'o') => KanaScanState::IsKana(KanaToken::Gyo),
+                        ("sh", 'o') => KanaScanState::IsKana(KanaToken::Sho),
+                        ("j", 'o') => KanaScanState::IsKana(KanaToken::Jo),
+                        ("ch", 'o') => KanaScanState::IsKana(KanaToken::Cho),
+                        ("ny", 'o') => KanaScanState::IsKana(KanaToken::Nyo),
+                        ("hy", 'o') => KanaScanState::IsKana(KanaToken::Hyo),
+                        ("by", 'o') => KanaScanState::IsKana(KanaToken::Byo),
+                        ("py", 'o') => KanaScanState::IsKana(KanaToken::Pyo),
+                        ("my", 'o') => KanaScanState::IsKana(KanaToken::Myo),
+                        ("ry", 'o') => KanaScanState::IsKana(KanaToken::Ryo),
                         (.., 'o') => KanaScanState::NonKanaThenKana(KanaToken::O),
 
-                        (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
+                        (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'f' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
                             if x.is_empty() {
                                 KanaScanState::MaybeKana
                             } else {
@@ -474,7 +498,8 @@ impl Kanas {
                                     ("d", 'd') => KanaScanState::MaybeKana,
                                     ("b", 'b') => KanaScanState::MaybeKana,
 
-                                    // for some other yoon
+                                    // for other yoon
+                                    // TODO: add the extended set (for loanwords)
                                     ("k", 'y') => KanaScanState::MaybeKana,
                                     ("g", 'y') => KanaScanState::MaybeKana,
                                     ("n", 'y') => KanaScanState::MaybeKana,
@@ -484,7 +509,7 @@ impl Kanas {
                                     ("m", 'y') => KanaScanState::MaybeKana,
                                     ("r", 'y') => KanaScanState::MaybeKana,
 
-                                    ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu
+                                    ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu, but it adds problems: 'tsya' leads to {tsy(NonKana)}{a} instead of {ts(NonKana)}{ya}, would need to split the accumulator instead of considering as one kana or non-kana
 
                                     ("n", ..) => KanaScanState::IsKanaThenMaybeKana(KanaToken::N),
                                     _ => KanaScanState::NonKanaThenMaybeKana
@@ -547,10 +572,24 @@ impl Kanas {
 }
 
 fn main() {
-    let args = env::args().skip(1).collect::<Vec<String>>().join(" ");
+    let mut args = env::args().skip(1);
+    let iteration_count = args.nth(0).unwrap_or(String::from("1")).parse().unwrap_or(1);
 
-    let kanas = Kanas::from_hepburn(args.as_str());
+    let romaji = args.collect::<Vec<String>>().join(" ");
+    let mut kanas = Option::<Kanas>::None;
 
-    println!("{}", kanas.to_hiraganas());
-    println!("{}", kanas.to_katakanas());
+    println!("iteration count: {}", iteration_count);
+
+    let start = std::time::Instant::now();
+
+    for _ in 0..iteration_count {
+        kanas = Some(Kanas::from_hepburn(&romaji));
+    }
+
+    println!("{:.6} ms", start.elapsed().as_nanos() as f64 / 1000000f64);
+
+    if let Some(x) = kanas {
+        println!("{}", x.to_hiraganas());
+        println!("{}", x.to_katakanas());
+    }   
 }
