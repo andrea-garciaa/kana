@@ -268,27 +268,30 @@ impl KanaSequence {
     pub fn to_hiragana(&self) -> String {
         let mut output = String::new();
 
-        let mut unknown_string = vec![];
+        let mut non_kana_bytes = vec![];
 
-        for kana in &self.0 {
-            match kana {
-                KanaToken::NonKana(x) => {
-                    unknown_string.push(*x);
-                },
+        for token in &self.0 {
+            match token {
                 KanaToken::Kana(x) => {
-                    // push the accumulated data first, as an utf-8 string
-                    if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
-                        output.push_str(string);
-                        unknown_string.clear();
+                    // try to push the accumulated data first, as an utf-8 string
+                    if !non_kana_bytes.is_empty() {
+                        if let Ok(string) = std::str::from_utf8(non_kana_bytes.as_slice()) {
+                            output.push_str(string);
+                        }
+
+                        non_kana_bytes.clear();
                     }
 
                     output.push_str(x.to_hiragana());
+                },
+                KanaToken::NonKana(x) => {
+                    non_kana_bytes.push(*x);
                 }
             }
         }
 
-        if !unknown_string.is_empty() {
-            if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+        if !non_kana_bytes.is_empty() {
+            if let Ok(string) = std::str::from_utf8(non_kana_bytes.as_slice()) {
                 output.push_str(string);
             }
         }
@@ -299,27 +302,30 @@ impl KanaSequence {
     pub fn to_katakana(&self) -> String {
         let mut output = String::new();
 
-        let mut unknown_string = vec![];
+        let mut non_kana_bytes = vec![];
 
-        for kana in &self.0 {
-            match kana {
-                KanaToken::NonKana(x) => {
-                    unknown_string.push(*x);
-                },
+        for token in &self.0 {
+            match token {
                 KanaToken::Kana(x) => {
-                    // push the accumulated data first, as an utf-8 string
-                    if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
-                        output.push_str(string);
-                        unknown_string.clear();
+                    // try to push the accumulated data first, as an utf-8 string
+                    if !non_kana_bytes.is_empty() {
+                        if let Ok(string) = std::str::from_utf8(non_kana_bytes.as_slice()) {
+                            output.push_str(string);
+                        }
+
+                        non_kana_bytes.clear();
                     }
 
                     output.push_str(x.to_katakana());
+                },
+                KanaToken::NonKana(x) => {
+                    non_kana_bytes.push(*x);
                 }
             }
         }
 
-        if !unknown_string.is_empty() {
-            if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+        if !non_kana_bytes.is_empty() {
+            if let Ok(string) = std::str::from_utf8(non_kana_bytes.as_slice()) {
                 output.push_str(string);
             }
         }
@@ -339,18 +345,6 @@ impl KanaSequence {
 
         loop {
             match iter.next() {
-                None => {
-                    if !accumulator.is_empty() {
-                        match accumulator.as_str() {
-                            "n" => tokens.push(KanaToken::Kana(Kana::N)),
-                            x => {
-                                x.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
-                            }
-                        }
-                    }
-
-                    break
-                },
                 Some(ch) => {
                     enum KanaScanState {
                         /// We have valid candidate-characters for a kana, but still incomplete
@@ -520,7 +514,7 @@ impl KanaSequence {
                         (.., 'o') => KanaScanState::NonKanaThenKana(Kana::O),
 
                         (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'f' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
-                            if x.is_empty() {
+                            if !x.is_empty() {
                                 KanaScanState::MaybeKana
                             } else {
                                 match (x, ch) {
@@ -554,7 +548,7 @@ impl KanaSequence {
                                     ("m", 'y') => KanaScanState::MaybeKana,
                                     ("r", 'y') => KanaScanState::MaybeKana,
 
-                                    ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu, but it adds problems: 'tsya' leads to {tsy(NonKana)}{a} instead of {ts(NonKana)}{ya}, would need to split the accumulator instead of considering as one kana or non-kana
+                                    //("ts", 'y') => KanaScanState::MaybeKana, // for tsyu, but it adds problems: 'tsya' leads to {tsy(NonKana)}{a} instead of {ts(NonKana)}{ya}, would need to split the accumulator instead of considering as one kana or non-kana
 
                                     ("n", ..) => KanaScanState::IsKanaThenMaybeKana(Kana::N),
                                     _ => KanaScanState::NonKanaThenMaybeKana,
@@ -607,6 +601,19 @@ impl KanaSequence {
                             accumulator.clear();
                         }
                     }
+                },
+                None => {
+                    // handle remaining character(s), if any
+                    if !accumulator.is_empty() {
+                        match accumulator.as_str() {
+                            "n" => tokens.push(KanaToken::Kana(Kana::N)),
+                            x => {
+                                x.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
+                            }
+                        }
+                    }
+
+                    break
                 }
             }
         }
