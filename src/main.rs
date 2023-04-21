@@ -586,10 +586,12 @@ fn main() {
         kanas = Some(Kanas::from_hepburn(&romaji));
     }
 
-    println!("{:.6} ms", start.elapsed().as_nanos() as f64 / 1000000f64);
+    println!("{} ms", start.elapsed().as_nanos() as f32 / 1000000f32);
 
     if let Some(x) = kanas {
         println!("{}", x.to_hiraganas());
         println!("{}", x.to_katakanas());
-    }   
+    }
+
+    println!("Byte array representation of romaji input: {:02X?}", romaji.as_bytes());
 }
