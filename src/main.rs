@@ -22,6 +22,4 @@ fn main() {
         println!("{}", x.to_hiragana());
         println!("{}", x.to_katakana());
     }
-
-    println!("Byte array representation of romaji input: {:02X?}", romaji.as_bytes());
 }
