@@ -4,11 +4,11 @@ Practicing Rust by making an alphabetic transcription program between Hepburn ro
 ## Usage
 First argument is number of iterations (or 1 if not found / misformatted), then all other arguments make up a romaji sequence. Invalid characters (in kana alphabet) will be normally outputted together with valid kanas, in input order. There may be some inconsistencies, such as `ttsu` being transformed to `ttす` instead of `tつ`, or not working for sokuon (`suttsu` get transformed to `すttす`).
 
-###Example
+### Example
 ```shell
 kana 1000000 aiueosashisusesonaninunenokakikukeko gya gyu pyu wa suzuki tsuzuru furanssu nonsense
 ```
-###Output
+### Output
 ```shell
 iteration count: 1000000
 679.3186 ms
