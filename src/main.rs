@@ -514,7 +514,7 @@ impl KanaSequence {
                         (.., 'o') => KanaScanState::NonKanaThenKana(Kana::O),
 
                         (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'f' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
-                            if !x.is_empty() {
+                            if x.is_empty() {
                                 KanaScanState::MaybeKana
                             } else {
                                 match (x, ch) {
