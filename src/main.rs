@@ -2,8 +2,11 @@ use std::{env};
 
 enum KanaToken {
     // For simplicity, we can include anything non-kana
-    NonKana(String),
+    NonKana(u8),
+    Kana(Kana),
+}
 
+enum Kana {
     // Base
     A,  I,   U,   E,  O,
     Ka, Ki,  Ku,  Ke, Ko, 
@@ -38,247 +41,287 @@ enum KanaToken {
     Rya,     Ryu,     Ryo,
 
     // Additionnal combo (for loanwords)
-    
+
 }
 
-impl KanaToken {
+impl Kana {
     pub fn to_hiragana(&self) -> &str {
         match &self {
-            KanaToken::NonKana(x) => x.as_str(),
-            KanaToken::A => "あ",
-            KanaToken::I => "い",
-            KanaToken::U => "う",
-            KanaToken::E => "え",
-            KanaToken::O => "お",
-            KanaToken::Ka => "か",
-            KanaToken::Ki => "き",
-            KanaToken::Ku => "く",
-            KanaToken::Ke => "け",
-            KanaToken::Ko => "こ",
-            KanaToken::Sa => "さ",
-            KanaToken::Shi => "し",
-            KanaToken::Su => "す",
-            KanaToken::Se => "せ",
-            KanaToken::So => "そ",
-            KanaToken::Ta => "た",
-            KanaToken::Chi => "ち",
-            KanaToken::Tsu => "つ",
-            KanaToken::Te => "て",
-            KanaToken::To => "と",
-            KanaToken::Na => "な",
-            KanaToken::Ni => "に",
-            KanaToken::Nu => "ぬ",
-            KanaToken::Ne => "ね",
-            KanaToken::No => "の",
-            KanaToken::Ha => "は",
-            KanaToken::Hi => "ひ",
-            KanaToken::Fu => "ふ",
-            KanaToken::He => "へ",
-            KanaToken::Ho => "ほ",
-            KanaToken::Ma => "ま",
-            KanaToken::Mi => "み",
-            KanaToken::Mu => "む",
-            KanaToken::Me => "め",
-            KanaToken::Mo => "も",
-            KanaToken::Ya => "や",
-            KanaToken::Yu => "ゆ",
-            KanaToken::Yo => "よ",
-            KanaToken::Ra => "ら",
-            KanaToken::Ri => "り",
-            KanaToken::Ru => "る",
-            KanaToken::Re => "れ",
-            KanaToken::Ro => "ろ",
-            KanaToken::Wa => "わ",
-            KanaToken::Wo => "を",
-            KanaToken::N => "ん",
-            KanaToken::Ga => "が",
-            KanaToken::Gi => "ぎ",
-            KanaToken::Gu => "ぐ",
-            KanaToken::Ge => "げ",
-            KanaToken::Go => "ご",
-            KanaToken::Za => "ざ",
-            KanaToken::Ji => "じ",
-            KanaToken::Zu => "ず",
-            KanaToken::Ze => "ぜ",
-            KanaToken::Zo => "ぞ",
-            KanaToken::Da => "だ",
-            KanaToken::De => "で",
-            KanaToken::Do => "ど",
-            KanaToken::Ba => "ば",
-            KanaToken::Bi => "び",
-            KanaToken::Bu => "ぶ",
-            KanaToken::Be => "べ",
-            KanaToken::Bo => "ぼ",
-            KanaToken::Pa => "ぱ",
-            KanaToken::Pi => "ぴ",
-            KanaToken::Pu => "ぷ",
-            KanaToken::Pe => "ぺ",
-            KanaToken::Po => "ぽ",
-            KanaToken::Kya => "きゃ",
-            KanaToken::Kyu => "きゅ",
-            KanaToken::Kyo => "きょ",
-            KanaToken::Gya => "ぎゃ",
-            KanaToken::Gyu => "ぎゅ",
-            KanaToken::Gyo => "ぎょ",
-            KanaToken::Sha => "しゃ",
-            KanaToken::Shu => "しゅ",
-            KanaToken::Sho => "しょ",
-            KanaToken::Ja => "じゃ",
-            KanaToken::Ju => "じゅ",
-            KanaToken::Jo => "じょ",
-            KanaToken::Cha => "ちゃ",
-            KanaToken::Chu => "ちゅ",
-            KanaToken::Cho => "ちょ",
-            KanaToken::Nya => "にゃ",
-            KanaToken::Nyu => "にゅ",
-            KanaToken::Nyo => "にょ",
-            KanaToken::Hya => "ひゃ",
-            KanaToken::Hyu => "ひゅ",
-            KanaToken::Hyo => "ひょ",
-            KanaToken::Bya => "びゃ",
-            KanaToken::Byu => "びゅ",
-            KanaToken::Byo => "びょ",
-            KanaToken::Pya => "ぴゃ",
-            KanaToken::Pyu => "ぴゅ",
-            KanaToken::Pyo => "ぴょ",
-            KanaToken::Mya => "みゃ",
-            KanaToken::Myu => "みゅ",
-            KanaToken::Myo => "みょ",
-            KanaToken::Rya => "りゃ",
-            KanaToken::Ryu => "りゅ",
-            KanaToken::Ryo => "りょ",
-            KanaToken::LittleTsu => "っ",
+            Kana::A => "あ",
+            Kana::I => "い",
+            Kana::U => "う",
+            Kana::E => "え",
+            Kana::O => "お",
+            Kana::Ka => "か",
+            Kana::Ki => "き",
+            Kana::Ku => "く",
+            Kana::Ke => "け",
+            Kana::Ko => "こ",
+            Kana::Sa => "さ",
+            Kana::Shi => "し",
+            Kana::Su => "す",
+            Kana::Se => "せ",
+            Kana::So => "そ",
+            Kana::Ta => "た",
+            Kana::Chi => "ち",
+            Kana::Tsu => "つ",
+            Kana::Te => "て",
+            Kana::To => "と",
+            Kana::Na => "な",
+            Kana::Ni => "に",
+            Kana::Nu => "ぬ",
+            Kana::Ne => "ね",
+            Kana::No => "の",
+            Kana::Ha => "は",
+            Kana::Hi => "ひ",
+            Kana::Fu => "ふ",
+            Kana::He => "へ",
+            Kana::Ho => "ほ",
+            Kana::Ma => "ま",
+            Kana::Mi => "み",
+            Kana::Mu => "む",
+            Kana::Me => "め",
+            Kana::Mo => "も",
+            Kana::Ya => "や",
+            Kana::Yu => "ゆ",
+            Kana::Yo => "よ",
+            Kana::Ra => "ら",
+            Kana::Ri => "り",
+            Kana::Ru => "る",
+            Kana::Re => "れ",
+            Kana::Ro => "ろ",
+            Kana::Wa => "わ",
+            Kana::Wo => "を",
+            Kana::N => "ん",
+            Kana::Ga => "が",
+            Kana::Gi => "ぎ",
+            Kana::Gu => "ぐ",
+            Kana::Ge => "げ",
+            Kana::Go => "ご",
+            Kana::Za => "ざ",
+            Kana::Ji => "じ",
+            Kana::Zu => "ず",
+            Kana::Ze => "ぜ",
+            Kana::Zo => "ぞ",
+            Kana::Da => "だ",
+            Kana::De => "で",
+            Kana::Do => "ど",
+            Kana::Ba => "ば",
+            Kana::Bi => "び",
+            Kana::Bu => "ぶ",
+            Kana::Be => "べ",
+            Kana::Bo => "ぼ",
+            Kana::Pa => "ぱ",
+            Kana::Pi => "ぴ",
+            Kana::Pu => "ぷ",
+            Kana::Pe => "ぺ",
+            Kana::Po => "ぽ",
+            Kana::Kya => "きゃ",
+            Kana::Kyu => "きゅ",
+            Kana::Kyo => "きょ",
+            Kana::Gya => "ぎゃ",
+            Kana::Gyu => "ぎゅ",
+            Kana::Gyo => "ぎょ",
+            Kana::Sha => "しゃ",
+            Kana::Shu => "しゅ",
+            Kana::Sho => "しょ",
+            Kana::Ja => "じゃ",
+            Kana::Ju => "じゅ",
+            Kana::Jo => "じょ",
+            Kana::Cha => "ちゃ",
+            Kana::Chu => "ちゅ",
+            Kana::Cho => "ちょ",
+            Kana::Nya => "にゃ",
+            Kana::Nyu => "にゅ",
+            Kana::Nyo => "にょ",
+            Kana::Hya => "ひゃ",
+            Kana::Hyu => "ひゅ",
+            Kana::Hyo => "ひょ",
+            Kana::Bya => "びゃ",
+            Kana::Byu => "びゅ",
+            Kana::Byo => "びょ",
+            Kana::Pya => "ぴゃ",
+            Kana::Pyu => "ぴゅ",
+            Kana::Pyo => "ぴょ",
+            Kana::Mya => "みゃ",
+            Kana::Myu => "みゅ",
+            Kana::Myo => "みょ",
+            Kana::Rya => "りゃ",
+            Kana::Ryu => "りゅ",
+            Kana::Ryo => "りょ",
+            Kana::LittleTsu => "っ",
         }
     }
 
     pub fn to_katakana(&self) -> &str {
         match &self {
-            KanaToken::NonKana(x) => x.as_str(),
-            KanaToken::A => "ア",
-            KanaToken::I => "イ",
-            KanaToken::U => "ウ",
-            KanaToken::E => "エ",
-            KanaToken::O => "オ",
-            KanaToken::Ka => "カ",
-            KanaToken::Ki => "キ",
-            KanaToken::Ku => "ク",
-            KanaToken::Ke => "ケ",
-            KanaToken::Ko => "コ",
-            KanaToken::Sa => "サ",
-            KanaToken::Shi => "シ",
-            KanaToken::Su => "ス",
-            KanaToken::Se => "セ",
-            KanaToken::So => "ソ",
-            KanaToken::Ta => "タ",
-            KanaToken::Chi => "チ",
-            KanaToken::Tsu => "ツ",
-            KanaToken::Te => "テ",
-            KanaToken::To => "ト",
-            KanaToken::Na => "ナ",
-            KanaToken::Ni => "ニ",
-            KanaToken::Nu => "ヌ",
-            KanaToken::Ne => "ネ",
-            KanaToken::No => "ノ",
-            KanaToken::Ha => "ハ",
-            KanaToken::Hi => "ヒ",
-            KanaToken::Fu => "フ",
-            KanaToken::He => "ヘ",
-            KanaToken::Ho => "ホ",
-            KanaToken::Ma => "マ",
-            KanaToken::Mi => "ミ",
-            KanaToken::Mu => "ム",
-            KanaToken::Me => "メ",
-            KanaToken::Mo => "モ",
-            KanaToken::Ya => "ヤ",
-            KanaToken::Yu => "ユ",
-            KanaToken::Yo => "ヨ",
-            KanaToken::Ra => "ラ",
-            KanaToken::Ri => "リ",
-            KanaToken::Ru => "ル",
-            KanaToken::Re => "レ",
-            KanaToken::Ro => "ロ",
-            KanaToken::Wa => "ワ",
-            KanaToken::Wo => "ヲ",
-            KanaToken::N => "ン",
-            KanaToken::Ga => "ガ",
-            KanaToken::Gi => "ギ",
-            KanaToken::Gu => "グ",
-            KanaToken::Ge => "ゲ",
-            KanaToken::Go => "ゴ",
-            KanaToken::Za => "ザ",
-            KanaToken::Ji => "ジ",
-            KanaToken::Zu => "ズ",
-            KanaToken::Ze => "ゼ",
-            KanaToken::Zo => "ゾ",
-            KanaToken::Da => "ダ",
-            KanaToken::De => "デ",
-            KanaToken::Do => "ド",
-            KanaToken::Ba => "バ",
-            KanaToken::Bi => "ビ",
-            KanaToken::Bu => "ブ",
-            KanaToken::Be => "ベ",
-            KanaToken::Bo => "ボ",
-            KanaToken::Pa => "パ",
-            KanaToken::Pi => "ピ",
-            KanaToken::Pu => "プ",
-            KanaToken::Pe => "ペ",
-            KanaToken::Po => "ポ",
-            KanaToken::Kya => "キャ",
-            KanaToken::Kyu => "キュ",
-            KanaToken::Kyo => "キョ",
-            KanaToken::Gya => "ギャ",
-            KanaToken::Gyu => "ギュ",
-            KanaToken::Gyo => "ギョ",
-            KanaToken::Sha => "シャ",
-            KanaToken::Shu => "シュ",
-            KanaToken::Sho => "ショ",
-            KanaToken::Ja => "ジャ",
-            KanaToken::Ju => "ジュ",
-            KanaToken::Jo => "ジョ",
-            KanaToken::Cha => "チャ",
-            KanaToken::Chu => "チュ",
-            KanaToken::Cho => "チョ",
-            KanaToken::Nya => "ニャ",
-            KanaToken::Nyu => "ニュ",
-            KanaToken::Nyo => "ニョ",
-            KanaToken::Hya => "ヒャ",
-            KanaToken::Hyu => "ヒュ",
-            KanaToken::Hyo => "ヒョ",
-            KanaToken::Bya => "ビャ",
-            KanaToken::Byu => "ビュ",
-            KanaToken::Byo => "ビョ",
-            KanaToken::Pya => "ピャ",
-            KanaToken::Pyu => "ピュ",
-            KanaToken::Pyo => "ピョ",
-            KanaToken::Mya => "ミャ",
-            KanaToken::Myu => "ミュ",
-            KanaToken::Myo => "ミョ",
-            KanaToken::Rya => "リャ",
-            KanaToken::Ryu => "リュ",
-            KanaToken::Ryo => "リョ",
-            KanaToken::LittleTsu => "ッ",
+            Kana::A => "ア",
+            Kana::I => "イ",
+            Kana::U => "ウ",
+            Kana::E => "エ",
+            Kana::O => "オ",
+            Kana::Ka => "カ",
+            Kana::Ki => "キ",
+            Kana::Ku => "ク",
+            Kana::Ke => "ケ",
+            Kana::Ko => "コ",
+            Kana::Sa => "サ",
+            Kana::Shi => "シ",
+            Kana::Su => "ス",
+            Kana::Se => "セ",
+            Kana::So => "ソ",
+            Kana::Ta => "タ",
+            Kana::Chi => "チ",
+            Kana::Tsu => "ツ",
+            Kana::Te => "テ",
+            Kana::To => "ト",
+            Kana::Na => "ナ",
+            Kana::Ni => "ニ",
+            Kana::Nu => "ヌ",
+            Kana::Ne => "ネ",
+            Kana::No => "ノ",
+            Kana::Ha => "ハ",
+            Kana::Hi => "ヒ",
+            Kana::Fu => "フ",
+            Kana::He => "ヘ",
+            Kana::Ho => "ホ",
+            Kana::Ma => "マ",
+            Kana::Mi => "ミ",
+            Kana::Mu => "ム",
+            Kana::Me => "メ",
+            Kana::Mo => "モ",
+            Kana::Ya => "ヤ",
+            Kana::Yu => "ユ",
+            Kana::Yo => "ヨ",
+            Kana::Ra => "ラ",
+            Kana::Ri => "リ",
+            Kana::Ru => "ル",
+            Kana::Re => "レ",
+            Kana::Ro => "ロ",
+            Kana::Wa => "ワ",
+            Kana::Wo => "ヲ",
+            Kana::N => "ン",
+            Kana::Ga => "ガ",
+            Kana::Gi => "ギ",
+            Kana::Gu => "グ",
+            Kana::Ge => "ゲ",
+            Kana::Go => "ゴ",
+            Kana::Za => "ザ",
+            Kana::Ji => "ジ",
+            Kana::Zu => "ズ",
+            Kana::Ze => "ゼ",
+            Kana::Zo => "ゾ",
+            Kana::Da => "ダ",
+            Kana::De => "デ",
+            Kana::Do => "ド",
+            Kana::Ba => "バ",
+            Kana::Bi => "ビ",
+            Kana::Bu => "ブ",
+            Kana::Be => "ベ",
+            Kana::Bo => "ボ",
+            Kana::Pa => "パ",
+            Kana::Pi => "ピ",
+            Kana::Pu => "プ",
+            Kana::Pe => "ペ",
+            Kana::Po => "ポ",
+            Kana::Kya => "キャ",
+            Kana::Kyu => "キュ",
+            Kana::Kyo => "キョ",
+            Kana::Gya => "ギャ",
+            Kana::Gyu => "ギュ",
+            Kana::Gyo => "ギョ",
+            Kana::Sha => "シャ",
+            Kana::Shu => "シュ",
+            Kana::Sho => "ショ",
+            Kana::Ja => "ジャ",
+            Kana::Ju => "ジュ",
+            Kana::Jo => "ジョ",
+            Kana::Cha => "チャ",
+            Kana::Chu => "チュ",
+            Kana::Cho => "チョ",
+            Kana::Nya => "ニャ",
+            Kana::Nyu => "ニュ",
+            Kana::Nyo => "ニョ",
+            Kana::Hya => "ヒャ",
+            Kana::Hyu => "ヒュ",
+            Kana::Hyo => "ヒョ",
+            Kana::Bya => "ビャ",
+            Kana::Byu => "ビュ",
+            Kana::Byo => "ビョ",
+            Kana::Pya => "ピャ",
+            Kana::Pyu => "ピュ",
+            Kana::Pyo => "ピョ",
+            Kana::Mya => "ミャ",
+            Kana::Myu => "ミュ",
+            Kana::Myo => "ミョ",
+            Kana::Rya => "リャ",
+            Kana::Ryu => "リュ",
+            Kana::Ryo => "リョ",
+            Kana::LittleTsu => "ッ",
         }
     }
 }
 
-pub struct Kanas(Vec<KanaToken>);
+pub struct KanaSequence(Vec<KanaToken>);
 
-impl Kanas {
-    pub fn to_hiraganas(&self) -> String {
+impl KanaSequence {
+    pub fn to_hiragana(&self) -> String {
         let mut output = String::new();
 
+        let mut unknown_string = vec![];
+
         for kana in &self.0 {
-            output.push_str(kana.to_hiragana());
+            match kana {
+                KanaToken::NonKana(x) => {
+                    unknown_string.push(*x);
+                },
+                KanaToken::Kana(x) => {
+                    // push the accumulated data first, as an utf-8 string
+                    if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+                        output.push_str(string);
+                        unknown_string.clear();
+                    }
+
+                    output.push_str(x.to_hiragana());
+                }
+            }
+        }
+
+        if !unknown_string.is_empty() {
+            if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+                output.push_str(string);
+            }
         }
 
         output
     }
     
-    pub fn to_katakanas(&self) -> String {
+    pub fn to_katakana(&self) -> String {
         let mut output = String::new();
 
+        let mut unknown_string = vec![];
+
         for kana in &self.0 {
-            output.push_str(kana.to_katakana());
+            match kana {
+                KanaToken::NonKana(x) => {
+                    unknown_string.push(*x);
+                },
+                KanaToken::Kana(x) => {
+                    // push the accumulated data first, as an utf-8 string
+                    if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+                        output.push_str(string);
+                        unknown_string.clear();
+                    }
+
+                    output.push_str(x.to_katakana());
+                }
+            }
+        }
+
+        if !unknown_string.is_empty() {
+            if let Ok(string) = std::str::from_utf8(unknown_string.as_slice()) {
+                output.push_str(string);
+            }
         }
 
         output
@@ -286,7 +329,7 @@ impl Kanas {
 
     /// Encode a vector of kana tokens from a Modified-Hepburn romaji sequence (https://en.wikipedia.org/wiki/Hepburn_romanization#Variants)
     pub fn from_hepburn(hepburn_sequence: &str) -> Self {
-        let mut kanas = vec![];
+        let mut tokens: Vec<KanaToken> = vec![];
 
         let chars = hepburn_sequence.chars();
         let mut iter = chars.into_iter();
@@ -299,8 +342,10 @@ impl Kanas {
                 None => {
                     if !accumulator.is_empty() {
                         match accumulator.as_str() {
-                            "n" => kanas.push(KanaToken::N),
-                            x => kanas.push(KanaToken::NonKana(String::from(x)))
+                            "n" => tokens.push(KanaToken::Kana(Kana::N)),
+                            x => {
+                                x.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
+                            }
                         }
                     }
 
@@ -315,164 +360,164 @@ impl Kanas {
                         /// We have a non-kana value followed by a kana candidate
                         NonKanaThenMaybeKana,
                         /// We have a valid kana
-                        IsKana(KanaToken),
-                        IsSokuon(KanaToken),
+                        IsKana(Kana),
+                        IsSokuon(Kana),
                         /// We have a valid kana followed by a kana candidate
-                        IsKanaThenMaybeKana(KanaToken),
+                        IsKanaThenMaybeKana(Kana),
                         /// We have a non-kana value followed by a valid kana
-                        NonKanaThenKana(KanaToken),
+                        NonKanaThenKana(Kana),
                     }
 
                     let kana: KanaScanState = match (accumulator.as_str(), ch) {
                         (x, 'a' | 'u' | 'i' | 'e' | 'o') if x.is_empty() => {
                             // returning NonKanaThenKana after each (.., <vowel>) without checking accumulator emptiness would be also fine, but it would incur a useless string copy
                             match ch {
-                                'a' => KanaScanState::IsKana(KanaToken::A),
-                                'i' => KanaScanState::IsKana(KanaToken::I),
-                                'u' => KanaScanState::IsKana(KanaToken::U),
-                                'e' => KanaScanState::IsKana(KanaToken::E),
-                                'o' => KanaScanState::IsKana(KanaToken::O),
+                                'a' => KanaScanState::IsKana(Kana::A),
+                                'i' => KanaScanState::IsKana(Kana::I),
+                                'u' => KanaScanState::IsKana(Kana::U),
+                                'e' => KanaScanState::IsKana(Kana::E),
+                                'o' => KanaScanState::IsKana(Kana::O),
                                 _ => unreachable!()
                             }
                         },
 
-                        ("k", 'a') => KanaScanState::IsKana(KanaToken::Ka),
-                        ("kk", 'a') => KanaScanState::IsSokuon(KanaToken::Ka),
-                        ("s", 'a') => KanaScanState::IsKana(KanaToken::Sa),
-                        ("ss", 'a') => KanaScanState::IsSokuon(KanaToken::Sa),
-                        ("t", 'a') => KanaScanState::IsKana(KanaToken::Ta),
-                        ("tt", 'a') => KanaScanState::IsSokuon(KanaToken::Ta),
-                        ("n", 'a') => KanaScanState::IsKana(KanaToken::Na),
-                        ("h", 'a') => KanaScanState::IsKana(KanaToken::Ha),
-                        ("m", 'a') => KanaScanState::IsKana(KanaToken::Ma),
-                        ("y", 'a') => KanaScanState::IsKana(KanaToken::Ya),
-                        ("r", 'a') => KanaScanState::IsKana(KanaToken::Ra),
-                        ("w", 'a') => KanaScanState::IsKana(KanaToken::Wa),
-                        ("g", 'a') => KanaScanState::IsKana(KanaToken::Ga),
-                        ("gg", 'a') => KanaScanState::IsSokuon(KanaToken::Ga),
-                        ("z", 'a') => KanaScanState::IsKana(KanaToken::Za),
-                        ("d", 'a') => KanaScanState::IsKana(KanaToken::Da),
-                        ("dd", 'a') => KanaScanState::IsSokuon(KanaToken::Da),
-                        ("b", 'a') => KanaScanState::IsKana(KanaToken::Ba),
-                        ("bb", 'a') => KanaScanState::IsSokuon(KanaToken::Ba),
-                        ("p", 'a') => KanaScanState::IsKana(KanaToken::Pa),
-                        ("pp", 'a') => KanaScanState::IsSokuon(KanaToken::Pa),
-                        ("ky", 'a') => KanaScanState::IsKana(KanaToken::Kya),
-                        ("gy", 'a') => KanaScanState::IsKana(KanaToken::Gya),
-                        ("sh", 'a') => KanaScanState::IsKana(KanaToken::Sha),
-                        ("j", 'a') => KanaScanState::IsKana(KanaToken::Ja),
-                        ("ch", 'a') => KanaScanState::IsKana(KanaToken::Cha),
-                        ("ny", 'a') => KanaScanState::IsKana(KanaToken::Nya),
-                        ("hy", 'a') => KanaScanState::IsKana(KanaToken::Hya),
-                        ("by", 'a') => KanaScanState::IsKana(KanaToken::Bya),
-                        ("py", 'a') => KanaScanState::IsKana(KanaToken::Pya),
-                        ("my", 'a') => KanaScanState::IsKana(KanaToken::Mya),
-                        ("ry", 'a') => KanaScanState::IsKana(KanaToken::Rya),
-                        (.., 'a') => KanaScanState::NonKanaThenKana(KanaToken::A),
+                        ("k", 'a') => KanaScanState::IsKana(Kana::Ka),
+                        ("kk", 'a') => KanaScanState::IsSokuon(Kana::Ka),
+                        ("s", 'a') => KanaScanState::IsKana(Kana::Sa),
+                        ("ss", 'a') => KanaScanState::IsSokuon(Kana::Sa),
+                        ("t", 'a') => KanaScanState::IsKana(Kana::Ta),
+                        ("tt", 'a') => KanaScanState::IsSokuon(Kana::Ta),
+                        ("n", 'a') => KanaScanState::IsKana(Kana::Na),
+                        ("h", 'a') => KanaScanState::IsKana(Kana::Ha),
+                        ("m", 'a') => KanaScanState::IsKana(Kana::Ma),
+                        ("y", 'a') => KanaScanState::IsKana(Kana::Ya),
+                        ("r", 'a') => KanaScanState::IsKana(Kana::Ra),
+                        ("w", 'a') => KanaScanState::IsKana(Kana::Wa),
+                        ("g", 'a') => KanaScanState::IsKana(Kana::Ga),
+                        ("gg", 'a') => KanaScanState::IsSokuon(Kana::Ga),
+                        ("z", 'a') => KanaScanState::IsKana(Kana::Za),
+                        ("d", 'a') => KanaScanState::IsKana(Kana::Da),
+                        ("dd", 'a') => KanaScanState::IsSokuon(Kana::Da),
+                        ("b", 'a') => KanaScanState::IsKana(Kana::Ba),
+                        ("bb", 'a') => KanaScanState::IsSokuon(Kana::Ba),
+                        ("p", 'a') => KanaScanState::IsKana(Kana::Pa),
+                        ("pp", 'a') => KanaScanState::IsSokuon(Kana::Pa),
+                        ("ky", 'a') => KanaScanState::IsKana(Kana::Kya),
+                        ("gy", 'a') => KanaScanState::IsKana(Kana::Gya),
+                        ("sh", 'a') => KanaScanState::IsKana(Kana::Sha),
+                        ("j", 'a') => KanaScanState::IsKana(Kana::Ja),
+                        ("ch", 'a') => KanaScanState::IsKana(Kana::Cha),
+                        ("ny", 'a') => KanaScanState::IsKana(Kana::Nya),
+                        ("hy", 'a') => KanaScanState::IsKana(Kana::Hya),
+                        ("by", 'a') => KanaScanState::IsKana(Kana::Bya),
+                        ("py", 'a') => KanaScanState::IsKana(Kana::Pya),
+                        ("my", 'a') => KanaScanState::IsKana(Kana::Mya),
+                        ("ry", 'a') => KanaScanState::IsKana(Kana::Rya),
+                        (.., 'a') => KanaScanState::NonKanaThenKana(Kana::A),
 
-                        ("k", 'i') => KanaScanState::IsKana(KanaToken::Ki),
-                        ("kk", 'i') => KanaScanState::IsSokuon(KanaToken::Ki),
-                        ("sh", 'i') => KanaScanState::IsKana(KanaToken::Shi),
-                        ("ssh", 'i') => KanaScanState::IsSokuon(KanaToken::Shi),
-                        ("ch", 'i') => KanaScanState::IsKana(KanaToken::Chi),
-                        ("tch", 'i') => KanaScanState::IsSokuon(KanaToken::Chi),
-                        ("n", 'i') => KanaScanState::IsKana(KanaToken::Ni),
-                        ("h", 'i') => KanaScanState::IsKana(KanaToken::Hi),
-                        ("m", 'i') => KanaScanState::IsKana(KanaToken::Mi),
-                        ("r", 'i') => KanaScanState::IsKana(KanaToken::Ri),
-                        ("g", 'i') => KanaScanState::IsKana(KanaToken::Gi),
-                        ("j", 'i') => KanaScanState::IsKana(KanaToken::Ji),
-                        ("b", 'i') => KanaScanState::IsKana(KanaToken::Bi),
-                        ("bb", 'i') => KanaScanState::IsSokuon(KanaToken::Bi),
-                        ("p", 'i') => KanaScanState::IsKana(KanaToken::Pi),
-                        ("pp", 'i') => KanaScanState::IsSokuon(KanaToken::Pi),
-                        (.., 'i') => KanaScanState::NonKanaThenKana(KanaToken::I),
+                        ("k", 'i') => KanaScanState::IsKana(Kana::Ki),
+                        ("kk", 'i') => KanaScanState::IsSokuon(Kana::Ki),
+                        ("sh", 'i') => KanaScanState::IsKana(Kana::Shi),
+                        ("ssh", 'i') => KanaScanState::IsSokuon(Kana::Shi),
+                        ("ch", 'i') => KanaScanState::IsKana(Kana::Chi),
+                        ("tch", 'i') => KanaScanState::IsSokuon(Kana::Chi),
+                        ("n", 'i') => KanaScanState::IsKana(Kana::Ni),
+                        ("h", 'i') => KanaScanState::IsKana(Kana::Hi),
+                        ("m", 'i') => KanaScanState::IsKana(Kana::Mi),
+                        ("r", 'i') => KanaScanState::IsKana(Kana::Ri),
+                        ("g", 'i') => KanaScanState::IsKana(Kana::Gi),
+                        ("j", 'i') => KanaScanState::IsKana(Kana::Ji),
+                        ("b", 'i') => KanaScanState::IsKana(Kana::Bi),
+                        ("bb", 'i') => KanaScanState::IsSokuon(Kana::Bi),
+                        ("p", 'i') => KanaScanState::IsKana(Kana::Pi),
+                        ("pp", 'i') => KanaScanState::IsSokuon(Kana::Pi),
+                        (.., 'i') => KanaScanState::NonKanaThenKana(Kana::I),
 
-                        ("k", 'u') => KanaScanState::IsKana(KanaToken::Ku),
-                        ("kk", 'u') => KanaScanState::IsSokuon(KanaToken::Ku),
-                        ("s", 'u') => KanaScanState::IsKana(KanaToken::Su),
-                        ("ss", 'u') => KanaScanState::IsSokuon(KanaToken::Su),
-                        ("ts", 'u') => KanaScanState::IsKana(KanaToken::Tsu),
-                        ("tts", 'u') => KanaScanState::IsSokuon(KanaToken::Tsu),
-                        ("n", 'u') => KanaScanState::IsKana(KanaToken::Nu),
-                        ("f", 'u') => KanaScanState::IsKana(KanaToken::Fu),
-                        ("m", 'u') => KanaScanState::IsKana(KanaToken::Mu),
-                        ("y", 'u') => KanaScanState::IsKana(KanaToken::Yu),
-                        ("r", 'u') => KanaScanState::IsKana(KanaToken::Ru),
-                        ("g", 'u') => KanaScanState::IsKana(KanaToken::Gu),
-                        ("gg", 'u') => KanaScanState::IsSokuon(KanaToken::Gu),
-                        ("z", 'u') => KanaScanState::IsKana(KanaToken::Zu),
-                        ("b", 'u') => KanaScanState::IsKana(KanaToken::Bu),
-                        ("bb", 'u') => KanaScanState::IsSokuon(KanaToken::Bu),
-                        ("p", 'u') => KanaScanState::IsKana(KanaToken::Pu),
-                        ("pp", 'u') => KanaScanState::IsSokuon(KanaToken::Pu),
-                        ("ky", 'u') => KanaScanState::IsKana(KanaToken::Kyu),
-                        ("gy", 'u') => KanaScanState::IsKana(KanaToken::Gyu),
-                        ("sh", 'u') => KanaScanState::IsKana(KanaToken::Shu),
-                        ("j", 'u') => KanaScanState::IsKana(KanaToken::Ju),
-                        ("ch", 'u') => KanaScanState::IsKana(KanaToken::Chu),
-                        ("ny", 'u') => KanaScanState::IsKana(KanaToken::Nyu),
-                        ("hy", 'u') => KanaScanState::IsKana(KanaToken::Hyu),
-                        ("by", 'u') => KanaScanState::IsKana(KanaToken::Byu),
-                        ("py", 'u') => KanaScanState::IsKana(KanaToken::Pyu),
-                        ("my", 'u') => KanaScanState::IsKana(KanaToken::Myu),
-                        ("ry", 'u') => KanaScanState::IsKana(KanaToken::Ryu),
-                        (.., 'u') => KanaScanState::NonKanaThenKana(KanaToken::U),
+                        ("k", 'u') => KanaScanState::IsKana(Kana::Ku),
+                        ("kk", 'u') => KanaScanState::IsSokuon(Kana::Ku),
+                        ("s", 'u') => KanaScanState::IsKana(Kana::Su),
+                        ("ss", 'u') => KanaScanState::IsSokuon(Kana::Su),
+                        ("ts", 'u') => KanaScanState::IsKana(Kana::Tsu),
+                        ("tts", 'u') => KanaScanState::IsSokuon(Kana::Tsu),
+                        ("n", 'u') => KanaScanState::IsKana(Kana::Nu),
+                        ("f", 'u') => KanaScanState::IsKana(Kana::Fu),
+                        ("m", 'u') => KanaScanState::IsKana(Kana::Mu),
+                        ("y", 'u') => KanaScanState::IsKana(Kana::Yu),
+                        ("r", 'u') => KanaScanState::IsKana(Kana::Ru),
+                        ("g", 'u') => KanaScanState::IsKana(Kana::Gu),
+                        ("gg", 'u') => KanaScanState::IsSokuon(Kana::Gu),
+                        ("z", 'u') => KanaScanState::IsKana(Kana::Zu),
+                        ("b", 'u') => KanaScanState::IsKana(Kana::Bu),
+                        ("bb", 'u') => KanaScanState::IsSokuon(Kana::Bu),
+                        ("p", 'u') => KanaScanState::IsKana(Kana::Pu),
+                        ("pp", 'u') => KanaScanState::IsSokuon(Kana::Pu),
+                        ("ky", 'u') => KanaScanState::IsKana(Kana::Kyu),
+                        ("gy", 'u') => KanaScanState::IsKana(Kana::Gyu),
+                        ("sh", 'u') => KanaScanState::IsKana(Kana::Shu),
+                        ("j", 'u') => KanaScanState::IsKana(Kana::Ju),
+                        ("ch", 'u') => KanaScanState::IsKana(Kana::Chu),
+                        ("ny", 'u') => KanaScanState::IsKana(Kana::Nyu),
+                        ("hy", 'u') => KanaScanState::IsKana(Kana::Hyu),
+                        ("by", 'u') => KanaScanState::IsKana(Kana::Byu),
+                        ("py", 'u') => KanaScanState::IsKana(Kana::Pyu),
+                        ("my", 'u') => KanaScanState::IsKana(Kana::Myu),
+                        ("ry", 'u') => KanaScanState::IsKana(Kana::Ryu),
+                        (.., 'u') => KanaScanState::NonKanaThenKana(Kana::U),
 
-                        ("k", 'e') => KanaScanState::IsKana(KanaToken::Ke),
-                        ("kk", 'e') => KanaScanState::IsSokuon(KanaToken::Ke),
-                        ("s", 'e') => KanaScanState::IsKana(KanaToken::Se),
-                        ("ss", 'e') => KanaScanState::IsSokuon(KanaToken::Se),
-                        ("t", 'e') => KanaScanState::IsKana(KanaToken::Te),
-                        ("tt", 'e') => KanaScanState::IsSokuon(KanaToken::Te),
-                        ("n", 'e') => KanaScanState::IsKana(KanaToken::Ne),
-                        ("h", 'e') => KanaScanState::IsKana(KanaToken::He),
-                        ("m", 'e') => KanaScanState::IsKana(KanaToken::Me),
-                        ("r", 'e') => KanaScanState::IsKana(KanaToken::Re),
-                        ("g", 'e') => KanaScanState::IsKana(KanaToken::Ge),
-                        ("gg", 'e') => KanaScanState::IsSokuon(KanaToken::Ge),
-                        ("z", 'e') => KanaScanState::IsKana(KanaToken::Ze),
-                        ("d", 'e') => KanaScanState::IsKana(KanaToken::De),
-                        ("dd", 'e') => KanaScanState::IsSokuon(KanaToken::De),
-                        ("b", 'e') => KanaScanState::IsKana(KanaToken::Be),
-                        ("bb", 'e') => KanaScanState::IsSokuon(KanaToken::Be),
-                        ("p", 'e') => KanaScanState::IsKana(KanaToken::Pe),
-                        ("pp", 'e') => KanaScanState::IsSokuon(KanaToken::Pe),
-                        (.., 'e') => KanaScanState::NonKanaThenKana(KanaToken::E),
+                        ("k", 'e') => KanaScanState::IsKana(Kana::Ke),
+                        ("kk", 'e') => KanaScanState::IsSokuon(Kana::Ke),
+                        ("s", 'e') => KanaScanState::IsKana(Kana::Se),
+                        ("ss", 'e') => KanaScanState::IsSokuon(Kana::Se),
+                        ("t", 'e') => KanaScanState::IsKana(Kana::Te),
+                        ("tt", 'e') => KanaScanState::IsSokuon(Kana::Te),
+                        ("n", 'e') => KanaScanState::IsKana(Kana::Ne),
+                        ("h", 'e') => KanaScanState::IsKana(Kana::He),
+                        ("m", 'e') => KanaScanState::IsKana(Kana::Me),
+                        ("r", 'e') => KanaScanState::IsKana(Kana::Re),
+                        ("g", 'e') => KanaScanState::IsKana(Kana::Ge),
+                        ("gg", 'e') => KanaScanState::IsSokuon(Kana::Ge),
+                        ("z", 'e') => KanaScanState::IsKana(Kana::Ze),
+                        ("d", 'e') => KanaScanState::IsKana(Kana::De),
+                        ("dd", 'e') => KanaScanState::IsSokuon(Kana::De),
+                        ("b", 'e') => KanaScanState::IsKana(Kana::Be),
+                        ("bb", 'e') => KanaScanState::IsSokuon(Kana::Be),
+                        ("p", 'e') => KanaScanState::IsKana(Kana::Pe),
+                        ("pp", 'e') => KanaScanState::IsSokuon(Kana::Pe),
+                        (.., 'e') => KanaScanState::NonKanaThenKana(Kana::E),
 
-                        ("k", 'o') => KanaScanState::IsKana(KanaToken::Ko),
-                        ("kk", 'o') => KanaScanState::IsSokuon(KanaToken::Ko),
-                        ("s", 'o') => KanaScanState::IsKana(KanaToken::So),
-                        ("ss", 'o') => KanaScanState::IsSokuon(KanaToken::So),
-                        ("t", 'o') => KanaScanState::IsKana(KanaToken::To),
-                        ("tt", 'o') => KanaScanState::IsSokuon(KanaToken::To),
-                        ("n", 'o') => KanaScanState::IsKana(KanaToken::No),
-                        ("h", 'o') => KanaScanState::IsKana(KanaToken::Ho),
-                        ("m", 'o') => KanaScanState::IsKana(KanaToken::Mo),
-                        ("y", 'o') => KanaScanState::IsKana(KanaToken::Yo),
-                        ("r", 'o') => KanaScanState::IsKana(KanaToken::Ro),
-                        ("w", 'o') => KanaScanState::IsKana(KanaToken::Wo),
-                        ("g", 'o') => KanaScanState::IsKana(KanaToken::Go),
-                        ("gg", 'o') => KanaScanState::IsSokuon(KanaToken::Go),
-                        ("z", 'o') => KanaScanState::IsKana(KanaToken::Zo),
-                        ("d", 'o') => KanaScanState::IsKana(KanaToken::Do),
-                        ("dd", 'o') => KanaScanState::IsSokuon(KanaToken::Do),
-                        ("b", 'o') => KanaScanState::IsKana(KanaToken::Bo),
-                        ("bb", 'o') => KanaScanState::IsSokuon(KanaToken::Bo),
-                        ("p", 'o') => KanaScanState::IsKana(KanaToken::Po),
-                        ("pp", 'o') => KanaScanState::IsSokuon(KanaToken::Po),
-                        ("ky", 'o') => KanaScanState::IsKana(KanaToken::Kyo),
-                        ("gy", 'o') => KanaScanState::IsKana(KanaToken::Gyo),
-                        ("sh", 'o') => KanaScanState::IsKana(KanaToken::Sho),
-                        ("j", 'o') => KanaScanState::IsKana(KanaToken::Jo),
-                        ("ch", 'o') => KanaScanState::IsKana(KanaToken::Cho),
-                        ("ny", 'o') => KanaScanState::IsKana(KanaToken::Nyo),
-                        ("hy", 'o') => KanaScanState::IsKana(KanaToken::Hyo),
-                        ("by", 'o') => KanaScanState::IsKana(KanaToken::Byo),
-                        ("py", 'o') => KanaScanState::IsKana(KanaToken::Pyo),
-                        ("my", 'o') => KanaScanState::IsKana(KanaToken::Myo),
-                        ("ry", 'o') => KanaScanState::IsKana(KanaToken::Ryo),
-                        (.., 'o') => KanaScanState::NonKanaThenKana(KanaToken::O),
+                        ("k", 'o') => KanaScanState::IsKana(Kana::Ko),
+                        ("kk", 'o') => KanaScanState::IsSokuon(Kana::Ko),
+                        ("s", 'o') => KanaScanState::IsKana(Kana::So),
+                        ("ss", 'o') => KanaScanState::IsSokuon(Kana::So),
+                        ("t", 'o') => KanaScanState::IsKana(Kana::To),
+                        ("tt", 'o') => KanaScanState::IsSokuon(Kana::To),
+                        ("n", 'o') => KanaScanState::IsKana(Kana::No),
+                        ("h", 'o') => KanaScanState::IsKana(Kana::Ho),
+                        ("m", 'o') => KanaScanState::IsKana(Kana::Mo),
+                        ("y", 'o') => KanaScanState::IsKana(Kana::Yo),
+                        ("r", 'o') => KanaScanState::IsKana(Kana::Ro),
+                        ("w", 'o') => KanaScanState::IsKana(Kana::Wo),
+                        ("g", 'o') => KanaScanState::IsKana(Kana::Go),
+                        ("gg", 'o') => KanaScanState::IsSokuon(Kana::Go),
+                        ("z", 'o') => KanaScanState::IsKana(Kana::Zo),
+                        ("d", 'o') => KanaScanState::IsKana(Kana::Do),
+                        ("dd", 'o') => KanaScanState::IsSokuon(Kana::Do),
+                        ("b", 'o') => KanaScanState::IsKana(Kana::Bo),
+                        ("bb", 'o') => KanaScanState::IsSokuon(Kana::Bo),
+                        ("p", 'o') => KanaScanState::IsKana(Kana::Po),
+                        ("pp", 'o') => KanaScanState::IsSokuon(Kana::Po),
+                        ("ky", 'o') => KanaScanState::IsKana(Kana::Kyo),
+                        ("gy", 'o') => KanaScanState::IsKana(Kana::Gyo),
+                        ("sh", 'o') => KanaScanState::IsKana(Kana::Sho),
+                        ("j", 'o') => KanaScanState::IsKana(Kana::Jo),
+                        ("ch", 'o') => KanaScanState::IsKana(Kana::Cho),
+                        ("ny", 'o') => KanaScanState::IsKana(Kana::Nyo),
+                        ("hy", 'o') => KanaScanState::IsKana(Kana::Hyo),
+                        ("by", 'o') => KanaScanState::IsKana(Kana::Byo),
+                        ("py", 'o') => KanaScanState::IsKana(Kana::Pyo),
+                        ("my", 'o') => KanaScanState::IsKana(Kana::Myo),
+                        ("ry", 'o') => KanaScanState::IsKana(Kana::Ryo),
+                        (.., 'o') => KanaScanState::NonKanaThenKana(Kana::O),
 
                         (x, 'k' | 's' | 't' | 'p' | 'c' | 'n' | 'h' | 'f' | 'm' | 'y' | 'r' | 'w' | 'g' | 'z' | 'd' | 'b' | 'j') => {
                             if x.is_empty() {
@@ -511,8 +556,8 @@ impl Kanas {
 
                                     ("ts", 'y') => KanaScanState::MaybeKana, // for tsyu, but it adds problems: 'tsya' leads to {tsy(NonKana)}{a} instead of {ts(NonKana)}{ya}, would need to split the accumulator instead of considering as one kana or non-kana
 
-                                    ("n", ..) => KanaScanState::IsKanaThenMaybeKana(KanaToken::N),
-                                    _ => KanaScanState::NonKanaThenMaybeKana
+                                    ("n", ..) => KanaScanState::IsKanaThenMaybeKana(Kana::N),
+                                    _ => KanaScanState::NonKanaThenMaybeKana,
                                 }
                             }
                         }
@@ -524,31 +569,30 @@ impl Kanas {
                     match kana {
                         // We have a valid kana, we can push it and clear the accumulator
                         KanaScanState::IsKana(x) => {
-                            kanas.push(x);
+                            tokens.push(KanaToken::Kana(x));
                             accumulator.clear();
                         },
                         // We have a valid sokuon, we can push it and clear the accumulator
                         KanaScanState::IsSokuon(x) => {
-                            kanas.push(KanaToken::LittleTsu);
-                            kanas.push(x);
+                            tokens.push(KanaToken::Kana(Kana::LittleTsu));
+                            tokens.push(KanaToken::Kana(x));
                             accumulator.clear();
                         },
                         // We have a valid kana, and the new character may also make up a valid kana, so we push and clear the accumulator, then add the new character to it
                         KanaScanState::IsKanaThenMaybeKana(x) => {
-                            kanas.push(x);
+                            tokens.push(KanaToken::Kana(x));
                             accumulator.clear();
                             accumulator.push(ch);
                         }
                         // The new character won't make part of valid kana at all, so we push it together with the accumulator, and clear the latter
                         KanaScanState::NonKana => {
-                            let mut x = String::from(accumulator.as_str());
-                            x.push(ch);
-                            kanas.push(KanaToken::NonKana(x));
+                            accumulator.push(ch);
+                            accumulator.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
                             accumulator.clear();
                         },
                         // The accumulator won't make up any valid kana, but the new character may do, so we push and clear the accumulator, then add this character to it
                         KanaScanState::NonKanaThenMaybeKana => {
-                            kanas.push(KanaToken::NonKana(String::from(accumulator.as_str())));
+                            accumulator.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
                             accumulator.clear();
                             accumulator.push(ch);
                         },
@@ -558,8 +602,8 @@ impl Kanas {
                         },
                         // The accumulator cannot form a valid kana but we have an already-valid kana after it, thus we push both values and clear the accumulator
                         KanaScanState::NonKanaThenKana(x) => {
-                            kanas.push(KanaToken::NonKana(String::from(accumulator.as_str())));
-                            kanas.push(x);
+                            accumulator.as_bytes().iter().for_each(|x| tokens.push(KanaToken::NonKana(*x)));
+                            tokens.push(KanaToken::Kana(x));
                             accumulator.clear();
                         }
                     }
@@ -567,7 +611,7 @@ impl Kanas {
             }
         }
 
-        Kanas(kanas)
+        KanaSequence(tokens)
     }
 }
 
@@ -576,21 +620,21 @@ fn main() {
     let iteration_count = args.nth(0).unwrap_or(String::from("1")).parse().unwrap_or(1);
 
     let romaji = args.collect::<Vec<String>>().join(" ");
-    let mut kanas = Option::<Kanas>::None;
+    let mut kanas = Option::<KanaSequence>::None;
 
     println!("iteration count: {}", iteration_count);
 
     let start = std::time::Instant::now();
 
     for _ in 0..iteration_count {
-        kanas = Some(Kanas::from_hepburn(&romaji));
+        kanas = Some(KanaSequence::from_hepburn(&romaji));
     }
 
     println!("{} ms", start.elapsed().as_nanos() as f32 / 1000000f32);
 
     if let Some(x) = kanas {
-        println!("{}", x.to_hiraganas());
-        println!("{}", x.to_katakanas());
+        println!("{}", x.to_hiragana());
+        println!("{}", x.to_katakana());
     }
 
     println!("Byte array representation of romaji input: {:02X?}", romaji.as_bytes());
