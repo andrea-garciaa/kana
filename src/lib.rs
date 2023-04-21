@@ -528,6 +528,7 @@ impl KanaSequence {
                                     ("s", 's') => KanaScanState::MaybeKana,
                                     ("ss", 'h') => KanaScanState::MaybeKana,
                                     ("t", 't') => KanaScanState::MaybeKana,
+                                    ("tt", 's') => KanaScanState::MaybeKana, // for ttsu
                                     ("t", 'c') => KanaScanState::MaybeKana, // needed for the following line (tc+h) to be handled, otherwise the 't' would be discarded early
                                     ("tc", 'h') => KanaScanState::MaybeKana,
                                     ("p", 'p') => KanaScanState::MaybeKana,
